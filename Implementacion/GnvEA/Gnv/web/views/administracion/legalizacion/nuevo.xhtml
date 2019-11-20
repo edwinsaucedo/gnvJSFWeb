@@ -1,0 +1,474 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+        <script>
+            function disableChoosing() {
+                PF('fileUpwidget').disableButton(PF('fileUpwidget').chooseButton);
+                PF('fileUpwidget').chooseButton.find('input[type="file"]').attr('disabled', 'disabled');
+            }
+
+            function enableChoosing() {
+                if (!PF('fileUpwidget').files.length) {
+                    PF('fileUpwidget').enableButton(PF('fileUpwidget').chooseButton);
+                    PF('fileUpwidget').chooseButton.find('input[type="file"]').removeAttr('disabled');
+                }
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">#{nuevoLegalizacionManagedBean.titulo}</ui:define>
+
+    <ui:define name="content" id="ui">
+        <h:form id="frmNuevoLeg">
+
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>#{nuevoLegalizacionManagedBean.titulo}</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:guardar')}" icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" disabled="#{nuevoLegalizacionManagedBean.legalizacionInfoDisabled}" id="cbtnGuardar" value="Guardar" actionListener="#{nuevoLegalizacionManagedBean.guardar()}"  update=":frmNuevoLeg , olLegal"/>
+                                </p:toolbarGroup>
+
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbNuevo" value="Regresar" outcome="lista" icon="ui-icon-keyboard-return" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12">
+
+                                <h:outputLabel id="olLegal" style="font-weight: bold;" value="#{nuevoLegalizacionManagedBean.legalizacionString}"/>
+                                <p:panelGrid id="idPanelGrid" columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+
+
+                                    <h:outputLabel for="itNumeroDoc"  value="Numero Documentación:"/>
+                                    <p:inputText id="itNumeroDoc" required="true" disabled="#{nuevoLegalizacionManagedBean.legalizacionInfoDisabled}" value="#{nuevoLegalizacionManagedBean.legalizacion.numeroDoc}" requiredMessage="Numero de documentación requerido."/>
+
+                                    <h:outputLabel for="soTipoLeg" value="Tipo legalización: "/>
+                                    <p:selectOneMenu id="soTipoLeg" value="#{nuevoLegalizacionManagedBean.tipoLegalizacion}" disabled="#{nuevoLegalizacionManagedBean.legalizacionInfoDisabled}" converter="#{tipoLegalizacionConverter}" required="true" requiredMessage="Tipo de legalizacion requerido.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoLegalizacionManagedBean.listaTipoLeg}" var="tl" itemLabel="#{tl.nombre}" itemValue="#{tl}"/>
+                                        <p:ajax event="change" listener="#{nuevoLegalizacionManagedBean.onTipoLegalizacionOnChange()}" update=":frmNuevoLeg:panel"/>
+                                    </p:selectOneMenu>
+
+                                    <h:outputLabel for="soTipoDocLeg" value="Documento legal: "/>
+                                    <p:selectOneMenu disabled="#{nuevoLegalizacionManagedBean.legalizacionInfoDisabled}" id="soTipoDocLeg" value="#{nuevoLegalizacionManagedBean.tipoDocLegal}" converter="#{tipoDocLegalConverter}" required="true" requiredMessage="Tipo de documento legal requerido.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoLegalizacionManagedBean.listaTipoDocLegal}" var="tdl" itemLabel="#{tdl.nombre}" itemValue="#{tdl}"/>
+                                    </p:selectOneMenu>
+
+
+                                </p:panelGrid>
+                                <p:panelGrid id="panel" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                    <h:outputLabel for="itNumeroMotor" value="Numero de motor:" rendered="#{nuevoLegalizacionManagedBean.tipo}"/>
+                                    <p:inputText disabled="#{nuevoLegalizacionManagedBean.legalizacionInfoDisabled}" id="itNumeroMotor"  required="true" value="#{nuevoLegalizacionManagedBean.legalizacion.numeroMotor}" requiredMessage="Numero de motor requerido." rendered="#{nuevoLegalizacionManagedBean.tipo}"/>
+
+                                    <h:outputLabel for="itInfoRegulador" value="Informacion de regulador:" rendered="#{nuevoLegalizacionManagedBean.tipo}"/>
+                                    <p:inputText disabled="#{nuevoLegalizacionManagedBean.legalizacionInfoDisabled}"  id="itInfoRegulador" required="true" value="#{nuevoLegalizacionManagedBean.legalizacion.informacionRegulador}" requiredMessage="Informacion de regulador requerido." rendered="#{nuevoLegalizacionManagedBean.tipo}"  />
+
+                                </p:panelGrid>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:tabView>
+
+                        <p:tab title="Kit">
+
+                            <h:form id="frmNuevoKit">
+                                <div class="ui-grid-row">
+                                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                                        <p:panelGrid columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                            <h:outputLabel for="itSerialKit" value="Serial:"/>
+                                            <p:inputText id="itSerialKit" required="true" value="#{nuevoLegalizacionManagedBean.serialKit}" requiredMessage="Lote requerido."/>
+
+                                            <h:outputLabel for="soMarcaKit" value="Marca: "/>
+                                            <p:selectOneMenu id="soMarcaKit" value="#{nuevoLegalizacionManagedBean.marca}" converter="#{marcaConverter}" required="true" requiredMessage="Marca requerido.">
+                                                <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                                <f:selectItems value="#{nuevoLegalizacionManagedBean.marcaListKits}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}"/>
+                                                <p:ajax event="change" listener="#{nuevoLegalizacionManagedBean.onMarcaChage()}" update="j_idt60:frmNuevoKit:soLineaKit"/>
+                                            </p:selectOneMenu>
+
+
+                                            <h:outputLabel for="soLineaKit" value="Linea: "/>
+                                            <p:selectOneMenu id="soLineaKit" value="#{nuevoLegalizacionManagedBean.linea}" converter="#{lineaConverter}" required="true" requiredMessage="Linea requerido.">
+                                                <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                                <f:selectItems value="#{nuevoLegalizacionManagedBean.lineaList}" var="l" itemLabel="#{l.nombre}" itemValue="#{l}"/>
+                                            </p:selectOneMenu>
+                                            <h:outputLabel for="soFabricanteKit" value="Fabricante: "/>
+                                            <p:selectOneMenu id="soFabricanteKit" value="#{nuevoLegalizacionManagedBean.kit.fabricante}" converter="#{fabricanteConverter}" required="true" requiredMessage="Fabricante requerido.">
+                                                <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                                <f:selectItems value="#{nuevoLegalizacionManagedBean.fabricanteList}" var="f" itemLabel="#{f.nombre}" itemValue="#{f}"/>
+                                            </p:selectOneMenu>
+
+
+                                            <p:outputLabel for="dpFechaKit" value="Fecha de fabricacion:" />
+                                            <p:datePicker id="dpFechaKit" value="#{nuevoLegalizacionManagedBean.kit.fechaFabricacion}" required="true" showIcon="true" requiredMessage="Fecha requerido." />
+
+
+                                            <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:guardar:kitCilindro')}" icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnGuardarKit" value="Guardar" actionListener="#{nuevoLegalizacionManagedBean.guardarKit()}" style="width:100px;height:30px" update="frmNuevoLeg,j_idt60:frmNuevoKit, j_idt60:frmDtKit"/>
+
+
+
+                                        </p:panelGrid>
+                                    </div>
+                                </div>
+                            </h:form>
+
+
+
+                            <div class="ui-grid-row" style="margin-bottom: 10px; margin-left: 10px; margin-top: 10px;">
+
+
+
+                                <div  style=" width: 100%; align-content: center; align-items: center; alignment-baseline: central;alignment-adjust: central">                 
+                                    <h:form id="frmDtKit">
+                                        <p:dataTable id="dtKit"  tableStyle="table-layout:auto" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                     rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center " var="kit" value="#{nuevoLegalizacionManagedBean.listaKit}">
+                                            <p:column headerText="Serial">
+                                                <h:outputText value="#{kit.serial}" />
+                                            </p:column>
+
+                                            <p:column headerText="Fabricante">
+                                                <h:outputText value="#{kit.fabricante.nombre}" />
+                                            </p:column>
+
+                                            <p:column headerText="Marca">
+                                                <h:outputText value="#{kit.marca.nombre}" />
+                                            </p:column>
+                                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:editar:kitCilindro')}" icon="ui-icon-pencil"  title="Editar" actionListener="#{nuevoLegalizacionManagedBean.showDataKit()}" update="frmEditKit" >
+                                                    <f:param name="idKit" value="#{kit.id}"/>
+                                                </p:commandButton>
+                                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:eliminar:kitCilindro')}" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevoLegalizacionManagedBean.eliminarKit()}"   update="j_idt60:frmDtKit">
+                                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                                    <f:param name="id_del" value="#{kit.id}"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>
+
+                                    </h:form>
+
+
+
+                                </div>
+                            </div>
+
+                        </p:tab>
+
+
+
+
+                        <p:tab title="Cilindro" id="tabCilindro">
+                            <h:form id="frmCil">
+                                <div class="ui-grid-row">
+                                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                                        <p:panelGrid id="panel" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho" >
+                                            <h:outputLabel for="itSerialCil" value="Serial:"/>
+                                            <p:inputText id="itSerialCil" required="true" value="#{nuevoLegalizacionManagedBean.serialCilindro}" requiredMessage="Numero serial requerido."/>
+
+
+                                            <h:outputLabel for="itCapacidad" value="Capacidad:"/>
+                                            <p:inputNumber id="itCapacidad" maxlength="6" maxValue="9999.99" required="true" value="#{nuevoLegalizacionManagedBean.cilindro.capacidad}" requiredMessage="Capacidad requerido."/>
+
+
+                                            <h:outputLabel for="itLote" value="Lote:"/>
+                                            <p:inputText id="itLote" required="true" value="#{nuevoLegalizacionManagedBean.cilindro.lote}" requiredMessage="Lote requerido."/>
+
+                                            <h:outputLabel for="soFabricanteC" value="Fabricante: "/>
+                                            <p:selectOneMenu id="soFabricanteC" value="#{nuevoLegalizacionManagedBean.cilindro.fabricante}" converter="#{fabricanteConverter}" required="true" requiredMessage="Fabricante requerido.">
+                                                <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                                <f:selectItems value="#{nuevoLegalizacionManagedBean.fabricanteList}" var="f" itemLabel="#{f.nombre}" itemValue="#{f}"/>
+                                            </p:selectOneMenu>
+
+                                            <h:outputLabel for="soMarcaC" value="Marca: "/>
+                                            <p:selectOneMenu id="soMarcaC" value="#{nuevoLegalizacionManagedBean.marca}" converter="#{marcaConverter}" required="true" requiredMessage="Marca requerido.">
+                                                <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                                <f:selectItems value="#{nuevoLegalizacionManagedBean.marcaListCilindros}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}"/>
+                                                <p:ajax event="change" listener="#{nuevoLegalizacionManagedBean.onMarcaChage()}" update="j_idt60:frmCil:soLineaC"/>
+                                            </p:selectOneMenu>
+
+                                            <h:outputLabel for="soLineaC" value="Linea: "/>
+                                            <p:selectOneMenu id="soLineaC" value="#{nuevoLegalizacionManagedBean.linea}" converter="#{lineaConverter}" required="true" requiredMessage="Línea requerido.">
+                                                <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                                <f:selectItems value="#{nuevoLegalizacionManagedBean.lineaList}" var="l" itemLabel="#{l.nombre}" itemValue="#{l}"/>
+                                            </p:selectOneMenu>
+
+
+
+                                            <h:outputLabel for="soTipoCil" value="Tipo Cilindro:"/> 
+                                            <p:selectOneMenu id="soTipoCil" value="#{nuevoLegalizacionManagedBean.tipoCilindro}" converter="#{tipoCilindroConverter}" required="true" requiredMessage="Tipo Cilindro requerido.">
+                                                <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                                <f:selectItems value="#{nuevoLegalizacionManagedBean.tipoCilindroList}" var="tc" itemLabel="#{tc.nombre}" itemValue="#{tc}"/>
+                                            </p:selectOneMenu>
+
+
+                                            <p:outputLabel for="dpFecha" value="Fecha de fabricacion:" />
+                                            <p:datePicker id="dpFecha" value="#{nuevoLegalizacionManagedBean.cilindro.fechaFabricacion}" showIcon="true" />
+
+                                            <h:outputLabel for="itClase" value="Clase"/>
+                                            <p:inputText id="itClase" required="true" value="#{nuevoLegalizacionManagedBean.cilindro.clase}" requiredMessage="Clase requerido."/>
+
+                                            <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:guardar:kitCilindro')}" icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnGuardarCil" value="Guardar" actionListener="#{nuevoLegalizacionManagedBean.guardarCilindro()}" style="width:100px;height:30px" update="frmCil,frmNuevoLeg,j_idt60:frmDtCil"/>
+
+                                        </p:panelGrid>
+                                    </div>
+                                </div>
+                            </h:form>
+
+
+                            <div id="divData" class="ui-grid-row" style="margin-bottom: 10px; margin-left: 10px; margin-top: 10px;">
+
+
+
+                                <div  style=" width: 100%; align-content: center; align-items: center; alignment-baseline: central;alignment-adjust: central">                 
+                                    <h:form id="frmDtCil">
+                                        <p:dataTable    id="dtCilindros" tableStyle="table-layout:auto" value="#{nuevoLegalizacionManagedBean.listaCilindros}" paginator="true" var="cilindro" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                        rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center ">
+                                            <p:column headerText="Serial">
+                                                <h:outputText value="#{cilindro.serial}" />
+                                            </p:column>
+
+                                            <p:column headerText="Tipo">
+                                                <h:outputText value="#{cilindro.tipoCilindro.nombre}" />
+                                            </p:column>
+
+                                            <p:column headerText="Marca">
+                                                <h:outputText value="#{cilindro.marca.nombre}" />
+                                            </p:column>
+                                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:editar:kitCilindro')}" icon="ui-icon-pencil"  title="Editar"  actionListener="#{nuevoLegalizacionManagedBean.showDataCilindro()}" update="frmEditCil" >
+                                                    <f:param name="idCil" value="#{cilindro.id}"/>
+                                                </p:commandButton>
+                                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:eliminar:kitCilindro')}" id="btnDeleteCil" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevoLegalizacionManagedBean.eliminarCilindro()}" update="j_idt60:frmDtCil:dtCilindros">
+                                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                                    <f:param name="idCil" value="#{cilindro.id}"/>
+                                                </p:commandButton>
+                                            </p:column>
+
+
+                                        </p:dataTable>
+                                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                        </p:confirmDialog>
+
+                                    </h:form>
+
+                                </div>
+                            </div>
+
+                        </p:tab>
+
+                    </p:tabView>
+                    <p:dialog header="Editar Cilindro" widgetVar="dlgCil" modal="true" height="90%" width="80%">
+
+                        <h:form id="frmEditCil" >
+                            <h:panelGrid id="panelEdit" columns="6" cellpadding="10" >
+
+                                <h:outputLabel for="itSerialCilEdit" value="Serial:"/>
+                                <p:inputText id="itSerialCilEdit" required="true" value="#{nuevoLegalizacionManagedBean.serialCilindro}" requiredMessage="Numero serial requerido."/>
+
+                                <h:outputLabel for="itCapacidadEdit" value="Capacidad:"/>
+                                <p:inputNumber id="itCapacidadEdit" maxlength="6" maxValue="9999.99" required="true" value="#{nuevoLegalizacionManagedBean.cilindro.capacidad}" requiredMessage="Numero legal requerido."/>
+
+
+                                <h:outputLabel for="itLoteEdit" value="Lote:"/>
+                                <p:inputText id="itLoteEdit" required="true" value="#{nuevoLegalizacionManagedBean.cilindro.lote}" requiredMessage="Lote requerido."/>
+
+                                <h:outputLabel for="soFabricanteCEdit" value="Fabricante: "/>
+                                <p:selectOneMenu id="soFabricanteCEdit" value="#{nuevoLegalizacionManagedBean.cilindro.fabricante}" converter="#{fabricanteConverter}" required="true" requiredMessage="Fabricante requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoLegalizacionManagedBean.fabricanteList}" var="f" itemLabel="#{f.nombre}" itemValue="#{f}"/>
+                                </p:selectOneMenu>
+
+
+                                <h:outputLabel for="soMarcaCEdit" value="Marca: "/>
+                                <p:selectOneMenu id="soMarcaCEdit" value="#{nuevoLegalizacionManagedBean.marca}" converter="#{marcaConverter}" required="true" requiredMessage="Marca requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoLegalizacionManagedBean.marcaListCilindros}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}"/>
+                                    <p:ajax event="change" listener="#{nuevoLegalizacionManagedBean.onMarcaChage()}" update="frmEditCil:soLineaCEdit"/>
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="soLineaCEdit" value="Linea: "/>
+                                <p:selectOneMenu id="soLineaCEdit" value="#{nuevoLegalizacionManagedBean.linea}" converter="#{lineaConverter}" required="true" requiredMessage="Tipo de documento legal requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoLegalizacionManagedBean.lineaList}" var="l" itemLabel="#{l.nombre}" itemValue="#{l}"/>
+                                </p:selectOneMenu>
+
+
+
+                                <h:outputLabel for="soTipoEdit" value="Tipo Cilindro:"/> 
+                                <p:selectOneMenu id="soTipoEdit" value="#{nuevoLegalizacionManagedBean.cilindro.tipoCilindro}" converter="#{tipoCilindroConverter}" required="true" requiredMessage="Tipo Cilindro requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoLegalizacionManagedBean.tipoCilindroList}" var="tc" itemLabel="#{tc.nombre}" itemValue="#{tc}"/>
+                                </p:selectOneMenu>
+
+
+                                <p:outputLabel for="dpFechaEdit" value="Fecha de fabricacion:" />
+                                <p:datePicker id="dpFechaEdit" value="#{nuevoLegalizacionManagedBean.cilindro.fechaFabricacion}" showIcon="true" />
+
+                                <h:outputLabel for="itClaseEdit" value="Clase"/>
+                                <p:inputText id="itClaseEdit" required="true" value="#{nuevoLegalizacionManagedBean.cilindro.clase}" requiredMessage="Clase requerido."/>
+
+                                <p:commandButton icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnEditarCil" value="Guardar" actionListener="#{nuevoLegalizacionManagedBean.editarCilindro()}" style="width:100px;height:30px" update="frmNuevoLeg:growl,j_idt60:frmDtCil:dtCilindros" />
+                            </h:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+                    <p:dialog header="Editar Kit" widgetVar="dlgKit" modal="true" height="90%" width="80%">
+
+                        <h:form id="frmEditKit" >
+                            <h:panelGrid id="panelEdit" columns="6" cellpadding="10" >
+
+                                <h:outputLabel for="itSerialKitEdit" value="Serial:"/>
+                                <p:inputText id="itSerialKitEdit" required="true" value="#{nuevoLegalizacionManagedBean.serialKit}" requiredMessage="Numero serial requerido."/>
+
+                                <h:outputLabel for="soMarcaKitEdit" value="Marca: "/>
+                                <p:selectOneMenu id="soMarcaKitEdit" value="#{nuevoLegalizacionManagedBean.marca}" converter="#{marcaConverter}" required="true" requiredMessage="Marca requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoLegalizacionManagedBean.marcaListKits}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}"/>
+                                    <p:ajax event="change" listener="#{nuevoLegalizacionManagedBean.onMarcaChage()}" update="frmEditKit:soLineaKitEdit"/>
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="soLineaKitEdit" value="Linea: "/>
+                                <p:selectOneMenu id="soLineaKitEdit" value="#{nuevoLegalizacionManagedBean.linea}" converter="#{lineaConverter}" required="true" requiredMessage="Linea requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoLegalizacionManagedBean.lineaList}" var="l" itemLabel="#{l.nombre}" itemValue="#{l}"/>
+                                </p:selectOneMenu>
+                                <h:outputLabel for="soFabricanteKitEdit" value="Fabricante: "/>
+                                <p:selectOneMenu id="soFabricanteKitEdit" value="#{nuevoLegalizacionManagedBean.kit.fabricante}" converter="#{fabricanteConverter}" required="true" requiredMessage="Linea requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoLegalizacionManagedBean.fabricanteList}" var="f" itemLabel="#{f.nombre}" itemValue="#{f}"/>
+                                </p:selectOneMenu>
+
+
+                                <p:outputLabel for="dpFechaKitEdit" value="Fecha de fabricacion:" />
+                                <p:datePicker id="dpFechaKitEdit" value="#{nuevoLegalizacionManagedBean.kit.fechaFabricacion}" showIcon="true" />
+
+
+                                <p:commandButton icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnEditarKit" value="Guardar" actionListener="#{nuevoLegalizacionManagedBean.editarKit()}" style="width:100px;height:30px" update="frmNuevoLeg:growl,frmEditKit,j_idt60:frmDtKit"/>
+                            </h:panelGrid>
+                        </h:form>
+                    </p:dialog>
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:fieldset id="fsSubirDocumentos" legend="Cargar archivos como soporte de la legalización " style="margin-bottom:5%;">
+
+                        <h:form id="frmDocumento">
+                            <p:growl id="messages" showDetail="true" />
+
+                            <p:panelGrid id="idPanelGridVehiculoInfAdc" columns="2" layout="grid" style="margin-bottom:1%">
+                                <h:outputLabel for="isPublico"  value="Público:" />
+                                <p:inputSwitch id="isPublico" value="#{nuevoLegalizacionManagedBean.publico}" >
+                                    <p:ajax />
+                                </p:inputSwitch>
+                                <h:outputLabel for="fuDocumentos" value="Seleccionar documento: "/>
+                                <p:fileUpload rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:cargar:documento')}" label="Examinar" fileUploadListener="#{nuevoLegalizacionManagedBean.guardarDocumentos}" mode="advanced" widgetVar="fileUpwidget" id="fuButton" sizeLimit="5000000"  fileLimit="100" multiple="false" auto="true" dragDropSupport="false" onstart="disableChoosing()" skinSimple="true" update="frmdtFiles:dtFiles, frmNuevoLeg" oncomplete="enableChoosing()"/>
+
+                            </p:panelGrid>  
+
+
+
+
+                        </h:form>
+
+                        <br/>
+
+
+
+                        <h:form id="frmdtFiles">
+                            <p:dataTable    id="dtFiles" tableStyle="table-layout:auto" value="#{nuevoLegalizacionManagedBean.listaDocumento}" paginator="true" var="documento" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                            rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center ">
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{documento.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Extension">
+                                    <h:outputText value="#{documento.tipoArchivo.extension}" />
+                                </p:column>
+
+                                <p:column headerText="Acciones" style="text-align: center;">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:descargar:documento')}" icon="ui-icon-file-download"  title="Descargar"   actionListener="#{nuevoLegalizacionManagedBean.descargarDocumento(documento.id)}" ajax="false" >
+                                        <p:fileDownload value="#{nuevoLegalizacionManagedBean.streamedContent}" contentDisposition="inline"/>
+                                    </p:commandButton>
+
+
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:legalizacion:nuevo:eliminar:documento')}" id="btnDeleteCil" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevoLegalizacionManagedBean.eliminarDocumento()}"  update="dtFiles">
+                                        <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                        <f:param name="idDoc" value="#{documento.id}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                        </h:form>
+
+
+
+
+
+                    </p:fieldset>
+
+                </div>
+            </div>
+
+        </div>
+
+    </ui:define>
+
+</ui:composition>

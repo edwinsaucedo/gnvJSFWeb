@@ -1,0 +1,141 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Lista de Permisos</ui:define>
+
+
+    <ui:define name="content">
+
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Lista de Permisos</h1>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="ui-grid-row" style="margin-bottom: 10px;">
+                    <p:toolbar id="idToolBar">
+                        <p:toolbarGroup id="idToolBarGroup" align="left">
+                            <p:commandButton id="cmbNuevo" value="Nuevo Grupo" icon="ui-icon-document" oncomplete="PF('dlgNuevoGrupo').show();" actionListener="#{grupoPermisosManagedBean.seleccionarGrupoPermisoNuevo}"/>
+                        </p:toolbarGroup>
+                    </p:toolbar>
+                </div>
+                <p:treeTable id="ttGrupoPermisos" var="gpGnv" value="#{grupoPermisosManagedBean.rootNode}">
+                    <p:ajax event="expand" listener="#{grupoPermisosManagedBean.onExpand}"/>
+                    <p:ajax event="collapse" listener="#{grupoPermisosManagedBean.onCollapse}"/> 
+                    <f:facet name="header">
+                        Lista de permisos
+                    </f:facet>
+                    <p:column headerText="Nombre/Etiqueta" style="width: 50px;">
+                        <h:outputText value="#{gpGnv.gp.nombre}" rendered="#{gpGnv.gp!=null}"/>
+                        <h:outputText value="#{gpGnv.p.etiqueta}" rendered="#{gpGnv.p!=null}"/>
+                    </p:column>
+
+                    <p:column headerText="Permiso" style="width: 100px;"> 
+                        <h:outputText value="#{gpGnv.p.permiso}" rendered="#{gpGnv.p!=null}"/>
+                    </p:column>
+                    <p:column headerText="Orden" style="width: 10px;">
+                        <h:outputText value="#{gpGnv.gp.orden}" rendered="#{gpGnv.gp!=null}"/>
+                        <h:outputText value="#{gpGnv.p.orden}" rendered="#{gpGnv.p!=null}"/>
+                    </p:column>                        
+
+                    <p:column headerText="Acciones" style="width: 80px;"> 
+                        <h:panelGroup rendered="#{gpGnv.gp != null}">
+                            <p:commandButton icon="ui-icon-pencil" actionListener="#{grupoPermisosManagedBean.seleccionarGrupoPermiso}" oncomplete="PF('dlgNuevoGrupo').show();" update="frmNuevoGrupoPermisos:dlgNuevoGrupo,frmNuevoGrupoPermisos:pgNuevoGrupo">
+                                <f:param name="idGrupoPermiso" value="#{gpGnv.gp.id}" />
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-trash" actionListener="#{grupoPermisosManagedBean.seleccionarGrupoPermiso}" oncomplete="PF('confirmEliminar').show();">
+                                <f:param name="idGrupoPermiso" value="#{gpGnv.gp.id}"/>
+                            </p:commandButton>                                
+                            <p:commandButton icon="ui-icon-document" value="Nuevo grupo" actionListener="#{grupoPermisosManagedBean.seleccionarGrupoPermisoNuevo}" oncomplete="PF('dlgNuevoGrupo').show();" update="frmNuevoGrupoPermisos:dlgNuevoGrupo,frmNuevoGrupoPermisos:pgNuevoGrupo">
+                                <f:param name="idGrupoPermiso" value="#{gpGnv.gp.id}" />
+                            </p:commandButton>                       
+                            <p:commandButton icon="ui-icon-document" value="Nuevo permiso" actionListener="#{grupoPermisosManagedBean.seleccionarPermisoNuevo}" oncomplete="PF('dlgNuevoPermiso').show();" update="frmNuevoPermiso:dlgPermisos,frmNuevoPermiso:pgNuevoPermiso">
+                                <f:param name="idGrupoPermiso" value="#{gpGnv.gp.id}"/>
+                            </p:commandButton>
+                        </h:panelGroup>
+                        <h:panelGroup rendered="#{gpGnv.p.id != null}">                        
+                            <p:commandButton icon="ui-icon-pencil" actionListener="#{grupoPermisosManagedBean.seleccionarPermiso}" oncomplete="PF('dlgNuevoPermiso').show();" update="frmNuevoPermiso:dlgPermisos,frmNuevoPermiso:pgNuevoPermiso">
+                                <f:param name="idPermiso" value="#{gpGnv.p.id}"/>
+                            </p:commandButton>
+                            <p:commandButton icon="ui-icon-trash" actionListener="#{grupoPermisosManagedBean.seleccionarPermiso}" oncomplete="PF('confirmEliminarPermiso').show();">
+                                <f:param name="idPermiso" value="#{gpGnv.p.id}"/>
+                            </p:commandButton>
+                        </h:panelGroup>
+                    </p:column>
+
+                </p:treeTable>
+            </div>
+        </h:form>
+        <h:form id="frmNuevoGrupoPermisos">
+            <p:dialog id="dlgNuevoGrupo" header="#{grupoPermisosManagedBean.dialogGrupoPermisosHeader}" widgetVar="dlgNuevoGrupo" modal="true" responsive="true" resizable="false" >
+
+                <h:panelGrid id="pgNuevoGrupo" columns="2">
+                    <p:outputLabel value="Grupo padre" for="grupo_permiso_padre" />
+                    <p:selectOneMenu id="grupo_permiso_padre" value="#{grupoPermisosManagedBean.grupoPermiso.grupoPadre}" converter="#{grupoPermisosConverter}">
+                        <f:selectItem itemValue="Seleccione" itemLabel="Seleccione"/>
+                        <f:selectItems value="#{grupoPermisosManagedBean.listaGrupoPermiso}" var="gp" itemValue="#{gp}" itemLabel="#{gp.nombreFull}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Nombre" for="nombre"/>
+                    <p:inputText id="nombre" value="#{grupoPermisosManagedBean.grupoPermiso.nombre}" required="true"/>
+                    <p:outputLabel value="Orden" for="orden"/>
+                    <p:spinner size="3" id="orden" value="#{grupoPermisosManagedBean.grupoPermiso.orden}" min="1" required="true"/>
+                    <p:outputLabel value="Descripción" for="descripcion"/>
+                    <p:inputTextarea id="descripcion" value="#{grupoPermisosManagedBean.grupoPermiso.descripcion}"/>
+                </h:panelGrid>
+                <f:facet name="footer">
+                    <p:commandButton icon="ui-icon-check" value="Guardar"  actionListener="#{grupoPermisosManagedBean.guardarGrupoPermiso()}" update="fForm:growl,fForm:ttGrupoPermisos,frmNuevoGrupoPermisos:pgNuevoGrupo" oncomplete="PF('dlgNuevoGrupo').hide();"/>
+                </f:facet>
+
+            </p:dialog>
+        </h:form>
+
+        <h:form id="frmNuevoPermiso">
+            <p:dialog id="dlgPermisos" header="#{grupoPermisosManagedBean.dialogPermisosHeader}" widgetVar="dlgNuevoPermiso" modal="true" responsive="true" resizable="false">
+                <h:panelGrid id="pgNuevoPermiso" columns="2"> 
+                    <h:outputText value="Grupo" />
+                    <p:selectOneMenu value="#{grupoPermisosManagedBean.permiso.grupoPermiso}" converter="#{grupoPermisosConverter}">
+                        <f:selectItem itemValue="Seleccione" itemLabel="Seleccione"/>
+                        <f:selectItems value="#{grupoPermisosManagedBean.listaGrupoPermiso}" var="gp" itemValue="#{gp}" itemLabel="#{gp.nombreFull}"/>
+                    </p:selectOneMenu>
+                    <p:outputLabel value="Etiqueta" for="etiqueta"/>
+                    <p:inputText id="etiqueta" value="#{grupoPermisosManagedBean.permiso.etiqueta}" required="true"/>                        
+                    <p:outputLabel value="Permiso" for="permiso"/>
+                    <p:inputText id="permiso" value="#{grupoPermisosManagedBean.permiso.permiso}" required="true"/>
+                    <p:outputLabel value="Orden" for="orden"/>
+                    <p:spinner size="3" id="orden" value="#{grupoPermisosManagedBean.permiso.orden}" min="1" required="true"/>
+                    <p:outputLabel value="Descripción" for="descripcion"/>
+                    <p:inputTextarea id="descripcion" value="#{grupoPermisosManagedBean.permiso.descripcion}"/>
+                </h:panelGrid>
+                <p:commandButton style="float: right;" icon="ui-icon-check" value="Guardar" actionListener="#{grupoPermisosManagedBean.guardarPermiso}" update="fForm:growl,fForm:ttGrupoPermisos,frmNuevoPermiso:pgNuevoPermiso" oncomplete="PF('dlgNuevoPermiso').hide();"/>
+            </p:dialog>
+        </h:form>
+
+        <p:confirmDialog header="Eliminar grupo de permisos" message="¿Está seguro de que desea eliminar este grupo de permisos?" widgetVar="confirmEliminar" responsive="true">
+            <h:form id="frmEliminar">
+                <div class="botonesCentrar">
+                    <p:commandButton image="ui-icon-check" value="Aceptar" actionListener="#{grupoPermisosManagedBean.eliminarGrupoPermiso}" update="fForm:growl,fForm:ttGrupoPermisos" oncomplete="PF('confirmEliminar').hide();"/>
+                    <p:button href="#" image="ui-icon-close" value="Cancelar"   onclick="PF('confirmEliminar').hide();"/>
+                </div>
+            </h:form>
+        </p:confirmDialog>    
+
+        <p:confirmDialog header="Eliminar permiso" message="¿Está seguro de que desea eliminar este permiso?" widgetVar="confirmEliminarPermiso" responsive="true">
+            <h:form id="frmEliminarPermiso">
+                <div class="botonesCentrar">
+                    <p:commandButton icon="ui-icon-check" value="Aceptar" actionListener="#{grupoPermisosManagedBean.eliminarPermiso}" update="fForm:growl,fForm:ttGrupoPermisos" oncomplete="PF('confirmEliminarPermiso').hide();" />
+                    <p:button href="#" icon="ui-icon-close" value="Cancelar" onclick="PF('confirmEliminarPermiso').hide();"/>
+                </div>
+            </h:form>
+        </p:confirmDialog>
+
+    </ui:define>
+
+</ui:composition>
+

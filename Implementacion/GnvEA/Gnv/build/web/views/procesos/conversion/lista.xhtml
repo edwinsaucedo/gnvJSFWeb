@@ -1,0 +1,89 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Conversiones</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Conversiones</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:lista:nuevo')}" id="cmbNuevo" value="Nuevo" icon="ui-icon-add" outcome="nuevo" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12">
+                                <p:panelGrid id="idPanelGrid" style="margin-bottom: 1%;" columns="4" layout="grid" columnClasses=" ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                    <p:outputLabel for="soEstatus" value="Estatus:"/>
+                                    <p:selectOneMenu id="soEstatus" value="#{listaConversionManagedBean.estatus}" converter="#{estatusConverter}">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{listaConversionManagedBean.estatusList}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                                        <p:ajax event="change" listener="#{listaConversionManagedBean.onEstatusChange()}" update="fForm:dtConversion"/>
+                                    </p:selectOneMenu>
+                                </p:panelGrid>
+
+                            </div>
+                        </div>
+                        <p:dataTable id="dtConversion" value="#{listaConversionManagedBean.conversionList}" var="conversion" emptyMessage="Sin resultados."  rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                            <f:facet name="header">
+                                Lineas
+                            </f:facet>
+                            <p:column id="idColPlaca" headerText="Placa" filterBy="#{conversion.valoracion.vehiculo.placa}" sortBy="#{conversion.valoracion.vehiculo.placa}" filterMatchMode="contains">
+                                <h:outputText value="#{conversion.valoracion.vehiculo.placa}"/>
+                            </p:column>
+                            <p:column id="idColMarca" headerText="Marca" filterBy="#{conversion.valoracion.vehiculo.marca.nombre}" sortBy="#{conversion.valoracion.vehiculo.marca.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{conversion.valoracion.vehiculo.marca.nombre}"/>
+                            </p:column>
+                            <p:column id="idColLinea" headerText="Linea" filterBy="#{conversion.valoracion.vehiculo.linea.nombre}" sortBy="#{conversion.valoracion.vehiculo.linea.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{conversion.valoracion.vehiculo.linea.nombre}"/>
+                            </p:column>
+                            <p:column id="idColModelo" headerText="Modelo" filterBy="#{conversion.valoracion.vehiculo.modelo}" sortBy="#{conversion.valoracion.vehiculo.modelo}" filterMatchMode="contains">
+                                <h:outputText value="#{conversion.valoracion.vehiculo.modelo}"/>
+                            </p:column>
+                            <p:column id="idColTipoVeh" headerText="Tipo Vehiculo" filterBy="#{conversion.valoracion.vehiculo.tipo.nombre}" sortBy="#{conversion.valoracion.vehiculo.tipo.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{conversion.valoracion.vehiculo.tipo.nombre}"/>
+                            </p:column>
+                            <p:column id="idColFechaConversion" headerText="Fecha conversion" filterBy="#{conversion.fechaConversionF}" sortBy="#{conversion.fechaConversionF}" filterMatchMode="contains">
+                                <h:outputText value="#{conversion.fechaConversionF}"/>
+                            </p:column>
+                            <p:column id="idColEstatus" headerText="Estatus">
+                                <h:outputText value="#{conversion.estatus.nombre}"/>
+                            </p:column>
+                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:lista:editar')}" icon="ui-icon-pencil"  title="Editar" outcome="nuevo">
+                                    <f:param name="id" value="#{conversion.id}"/>
+                                </p:button>
+                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:lista:eliminar')}" icon="ui-icon-delete"  title="Borrar" actionListener="#{listaConversionManagedBean.eliminar()}" update="fForm:growl,fForm:dtConversion">
+                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                    <f:param name="id_e" value="#{conversion.id}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

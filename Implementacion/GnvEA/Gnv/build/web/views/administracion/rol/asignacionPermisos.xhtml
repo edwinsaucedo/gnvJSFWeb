@@ -1,0 +1,38 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"> 
+    
+    <ui:define name="content">  
+        <div align="left" class="ui-g dashboard">
+            <h1><h:outputLabel value="Asignación de permisos al rol: #{asignacionPermisosManagedBean.rolSeleccionado.nombre} "/></h1>
+
+
+            <h:form id="formaPermisos">
+                <p:growl id="growl" showDetail="true" escape="false" sticky="true"/>
+                <p:toolbar>
+                    <p:toolbarGroup align="left">
+                        <p:commandButton value="Guardar" icon="ui-icon-document" update="formaPermisos:growl" actionListener="#{asignacionPermisosManagedBean.seleccionarCheckbox(asignacionPermisosManagedBean.selectedNodes2)}" />
+                    </p:toolbarGroup>               
+                    <p:toolbarGroup align="right" >
+                        <p:button icon="ui-icon-reply" value="Regresar" outcome="/views/administracion/rol/lista" />
+                    </p:toolbarGroup>
+                </p:toolbar>  
+
+                <p:treeTable id="treeTable" value="#{asignacionPermisosManagedBean.root}" var="a" selectionMode="checkbox" 
+                             style="margin-top: 20px; margin-bottom: 30px" selection="#{asignacionPermisosManagedBean.selectedNodes2}">
+                    <p:column headerText="Permiso" >
+                        <h:outputText value="#{a.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Descripción">
+                        <h:outputText value="#{a.descripcion}"/>
+                    </p:column>
+                </p:treeTable> 
+
+            </h:form>
+        </div>
+
+    </ui:define>
+</ui:composition>

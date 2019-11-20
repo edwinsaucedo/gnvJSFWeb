@@ -1,0 +1,177 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="head">
+
+        <script type="text/javascript" src="https://maps.google.com/maps/api/js?key=AIzaSyCI_CKEJDmgj--9PXCjcmV3ILLwuUAY_N8"></script>
+
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+        <script type="text/javascript">
+            function geocode() {
+                var cp = document.getElementById('frm:codigo').value;
+                var direccion = document.getElementById('frm:direccion').value;
+
+                var ciudad = PF('soCiudad').getSelectedLabel();
+                var pais = PF('soPais').getSelectedLabel();
+                var estado = PF('soEstado').getSelectedLabel();
+
+                var res = cp.concat(' ', direccion, ' ', ciudad, ' ', estado, ' ', pais);
+
+
+                if (direccion !== '') {
+                    PF('geoMap').geocode(res);
+                } else {
+                    //$.toast('Here you can put the text of the toast');
+                    PF('growl').renderMessage({"summary": "Advertencia",
+                        "detail": "Ingrese una dirección válida",
+                        "severity": "warn"});
+                }
+
+            }
+            function geocodeByCity() {
+
+                var ciudad = PF('soCiudad').getSelectedLabel();
+
+                var res = ciudad;
+
+
+
+                if (ciudad !== '') {
+                    PF('geoMap').geocode(res);
+
+
+                } else {
+                    //$.toast('Here you can put the text of the toast');
+                    PF('growl').renderMessage({"summary": "Advertencia",
+                        "detail": "Ingrese una ciudad válida",
+                        "severity": "warn"});
+                }
+
+            }
+
+            function geocodeByCode() {
+
+                var cp = document.getElementById('frm:codigo').value;
+
+                var res = cp;
+
+
+
+                if (cp !== '') {
+                    PF('geoMap').geocode(res);
+
+
+                }
+
+            }
+
+
+            function reverseGeocode() {
+                var lat = document.getElementById('lat').value,
+                        lng = document.getElementById('lng').value;
+
+                PF('revGeoMap').reverseGeocode(lat, lng);
+            }
+        </script>
+    </ui:define>
+
+    <ui:define name="title">#{nuevaEstacionManagedBean.titulo}</ui:define>
+
+    <ui:define name="content">
+        <h:form id="frm" >   
+
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>#{nuevaEstacionManagedBean.titulo}</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:commandButton  icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" actionListener="#{nuevaEstacionManagedBean.guardar()}" id="cbtnGuardar" value="Guardar"  update="frm,growl"/>
+                                </p:toolbarGroup>
+
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbNuevo" value="Regresar" icon="ui-icon-keyboard-return" outcome="lista" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <p:growl widgetVar="growl" id="growl" showDetail="true" />
+            <p:panelGrid columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho" >
+                <p:outputLabel for="nombre" value="Nombre:" />
+                <p:inputText value="#{nuevaEstacionManagedBean.eds.nombre}" required="true" requiredMessage="Nombre requerido." id="nombre" />
+                <h:outputLabel for="soEmpresa" value="Empresa: "/>
+                <p:selectOneMenu id="soEmpresa" value="#{nuevaEstacionManagedBean.empresa}" converter="#{empresaConverter}" required="true" requiredMessage="Empresa requerida.">
+                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                    <f:selectItems value="#{nuevaEstacionManagedBean.listaEmpresa}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                </p:selectOneMenu>
+
+                <h:outputLabel for="soPais" value="Pais:"/>
+                <p:selectOneMenu  filter="true" widgetVar="soPais" filterMatchMode="startsWith" id="soPais"  value="#{nuevaEstacionManagedBean.pais}" converter="#{paisConverter}">
+                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                    <f:selectItems value="#{nuevaEstacionManagedBean.paisList}" var="p" itemLabel="#{p.nombre}" itemValue="#{p}"/>
+                    <p:ajax event="change" listener="#{nuevaEstacionManagedBean.onPaisChange()}" update="frm:soEstado"/>
+                </p:selectOneMenu> 
+                <h:outputLabel for="soEstado" value="Estado:"/>
+                <p:selectOneMenu id="soEstado" widgetVar="soEstado"  filter="true" filterMatchMode="startsWith"  value="#{nuevaEstacionManagedBean.estado}" converter="#{estadoConverter}">
+                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                    <f:selectItems value="#{nuevaEstacionManagedBean.estadoList}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                    <p:ajax event="change" listener="#{nuevaEstacionManagedBean.onEstadoChange()}" update="frm:soCiudad"/>
+                </p:selectOneMenu> 
+
+                <h:outputLabel for="soCiudad" value="Ciudad:"/>
+                <p:selectOneMenu filter="true" required="true" widgetVar="soCiudad" filterMatchMode="startsWith" onchange="geocodeByCity()" id="soCiudad" requiredMessage="Ciudad requerida."  value="#{nuevaEstacionManagedBean.ciudad}" converter="#{ciudadConverter}">
+                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                    <f:selectItems value="#{nuevaEstacionManagedBean.ciudadList}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>
+
+                </p:selectOneMenu>
+                <p:outputLabel for="codigo" value="Código Postal:" />
+                <p:inputText value="#{nuevaEstacionManagedBean.eds.codigoPostal}" 
+                             required="true" requiredMessage="Código postal" id="codigo"  onblur= " geocodeByCode()" > 
+
+                </p:inputText>
+
+
+                <p:outputLabel for="direccion" value="Dirección:" />
+                <p:inputText required="true" requiredMessage="Dirección requerida." id="direccion" value="#{nuevaEstacionManagedBean.eds.direccion}" />
+
+
+
+
+                <p:commandButton value="Buscar" icon="ui-icon-search" update="frm:growl,frm" onclick="geocode()" type="button" />
+            </p:panelGrid>
+
+            <p:gmap  id="geoMap" widgetVar="geoMap" center="#{nuevaEstacionManagedBean.centerGeoMap}" zoom="#{nuevaEstacionManagedBean.zoomMap}" type="NORMAL"  model="#{nuevaEstacionManagedBean.draggableModel}" style="width:100%;height:400px">
+                <p:ajax event="markerDrag" listener="#{nuevaEstacionManagedBean.onMarkerDrag}" update="growl" />
+                <p:ajax event="geocode" listener="#{nuevaEstacionManagedBean.onGeocode}" update="@this" />
+
+            </p:gmap>
+        </h:form>
+    </ui:define>
+
+</ui:composition>

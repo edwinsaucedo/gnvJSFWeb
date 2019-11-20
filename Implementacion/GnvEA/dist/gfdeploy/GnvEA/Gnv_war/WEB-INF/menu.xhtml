@@ -1,0 +1,78 @@
+﻿<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:pm="http://primefaces.org/serenity">
+
+
+    <div class="layout-sidebar #{temaManagedBean.darkMenu?'layout-sidebar-dark' : ''}">
+        <div class="sidebar-logo">
+            <a href="dashboard.xhtml">
+                <p:graphicImage name="images/logo-slim.png" library="serenity-layout" />
+                <span class="app-name">SERENITY</span>
+            </a>
+            <a href="#" class="sidebar-anchor" title="Toggle Menu"></a>
+        </div>
+        <div class="nano">
+            <div class="nano-content sidebar-scroll-content">
+                <div class="layout-menu-container">
+                    <h:form id="menuform"> 
+                        <pm:menu widgetVar="me">
+                            <p:menuitem id="mDashboard" value="Dashboard" icon="&#xE871;" outcome="/faces/views/home/dashboard" />
+                            <p:submenu id="smAdmin" label="Administración" icon="&#xE30B;" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:ver')}">
+                                <p:submenu id="smCatalogos" label="Catálogos" icon="&#xE865;" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:ver')}">
+                                    <p:menuitem id="mTipoCilindro" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoCilindro:ver')}" value="Tipo de Cilindro" outcome="/faces/views/administracion/tipoCilindro/lista"/>
+                                    <p:menuitem id="mTipoConversion" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoConversion:ver')}"   value="Tipo Conversion" outcome="/faces/views/administracion/tipoConversion/lista"/>
+                                    <p:menuitem id="mMarca" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:marca:ver')}" value="Marca" outcome="/faces/views/administracion/marca/lista"/>
+                                    <p:menuitem id="mTipoMarca" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoMarca:ver')}" value="Tipo de Marca" outcome="/faces/views/administracion/tipoMarca/lista"/>
+                                    <p:menuitem id="mLinea" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:linea:ver')}" value="Linea" outcome="/faces/views/administracion/linea/lista"/>
+                                    <p:menuitem id="mTipoServicio" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoServicio:ver')}" value="Tipo de Servicio" outcome="/faces/views/administracion/vehTipoServicio/lista"/>
+                                    <p:menuitem id="mTipoVehiculo" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoVehiculo:ver')}" value="Tipo de Vehículo" outcome="/faces/views/administracion/vehTipo/lista"/> 
+                                    <p:menuitem id="mClaseVehiculo" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:claseVehiculo:ver')}" value="Clase de Vehículo" outcome="/faces/views/administracion/vehClase/lista"/>
+                                    <p:menuitem id="mVehiculo" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:vehiculo:ver')}" value="Vehículo" outcome="/faces/views/administracion/vehiculo/lista"/>
+                                    <p:menuitem id="mTaller" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:taller:ver')}" value="Taller" outcome="/faces/views/administracion/taller/lista"/>
+                                    <p:menuitem id="mEmpresa" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:empresa:ver')}" value="Empresa" outcome="/faces/views/administracion/empresa/lista"/>
+                                    <p:menuitem id="mFabricante" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:fabricantes:ver')}" value="Fabricantes" outcome="/faces/views/administracion/fabricante/lista"/>
+                                    <p:menuitem id="mTipoDocumentacion" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoDocumentacion:ver')}" value="Tipo Documentacion" outcome="/faces/views/administracion/tipoDocumentacion/lista"/>
+                                    <p:menuitem id="mTipoConvenio" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoConvenio:ver')}" value="Tipo Convenio" outcome="/faces/views/administracion/tipoConvenio/lista"/>
+                                    <p:menuitem id="mTipoDocLegal" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoDocumentacionLegal:ver')}" value="Tipo Doc Legal" outcome="/faces/views/administracion/tipoDocLegal/lista"/>
+                                    <p:menuitem id="mTipoLegalizacion" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:tipoLegalizacion:ver')}" value="Tipo Legalizacion" outcome="/faces/views/administracion/tipoLegalizacion/lista"/>
+                                    <p:menuitem id="mLegalizacion" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:legalizacion:ver')}" value="Legalización" outcome="/faces/views/administracion/legalizacion/lista"/>
+                                    <p:menuitem id="mEds" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:eds:ver')}" value="Estaciones de surtido" outcome="/faces/views/administracion/eds/lista"/>
+                                    <p:menuitem id="mFinanciera" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:catalogos:financiera:ver')}" value="Financieras" outcome="/faces/views/administracion/financiera/lista"/>
+                                </p:submenu>
+                                <p:submenu id="smConfiguracionPlataforma" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:configuracion_plataforma:ver')}" label="Configuración Plataforma" icon="&#xE869;">
+                                    <p:menuitem id="mPermisos" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:configuracion_plataforma:permisos:ver')}" value="Permisos" icon="&#xE8E8;" outcome="/faces/views/administracion/permisos/lista"/> 
+                                    <p:menuitem id="mRoles" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:configuracion_plataforma:roles:ver')}" value="Roles" icon="&#xE3AE;" outcome="/faces/views/administracion/rol/lista"/>
+                                    <p:menuitem id="mUsuario" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:configuracion_plataforma:usuarios:ver')}"  value="Usuarios" icon="&#xe7fd;" outcome="/faces/views/administracion/usuario/lista"/>
+                                </p:submenu>
+                                <p:submenu id="smBitacoras"  label="Bitacoras" icon="&#xe866;" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:bitacoras:ver')}">
+                                    <p:menuitem id="mBitacoraActividades" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:administracion:bitacoras:bitacoraActividades:ver')}" value="Bitacora Actividades" outcome="/faces/views/administracion/actividades/lista"/> 
+                                </p:submenu>
+                            </p:submenu>
+                            <p:submenu id="smOperacion" label="Procesos" icon="&#xe322;" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:ver')}">
+                                <p:submenu id="smConversiones" label="Conversiones" icon="&#xe869;" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:conversiones:ver')}">
+                                    <p:menuitem id="mValoracion" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:conversiones:valoracion:ver')}" value="Valoración" outcome="/faces/views/procesos/valoracion/lista"/> 
+                                    <p:menuitem id="mConversion" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:conversiones:conversion:ver')}" value="Conversion" outcome="/faces/views/procesos/conversion/lista"/>
+                                    <p:menuitem id="mRevision" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:conversiones:revison:ver')}" value="Revisión" outcome="/faces/views/procesos/revision/lista"/>
+                                   
+                                </p:submenu>
+                                  <p:submenu id="smFinanciacion" label="Financiación" icon="&#xe263;" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:financiacion:ver')}">
+                                    <p:menuitem id="mCredito" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:financiacion:credito:ver')}" value="Crédito" outcome="/faces/views/procesos/credito/lista"/> 
+                                    <p:menuitem id="mCotizacion" rendered="#{shiroAuthPermManagedBean.isPermitted('menu:procesos:financiacion:cotizacion:ver')}" value="Cotizaciones" outcome="/faces/views/procesos/cotizacion/lista"/> 
+                                  
+                                </p:submenu>
+                            </p:submenu>
+                        </pm:menu>   
+                    </h:form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</ui:composition>
+
+

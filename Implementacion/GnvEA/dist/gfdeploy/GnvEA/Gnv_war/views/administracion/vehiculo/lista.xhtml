@@ -1,0 +1,87 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Lista de vehiculos</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Lista de vehiculos</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:vehiculo:lista:nuevo')}"  id="cmbNuevo" value="Nuevo" icon="ui-icon-add" outcome="nuevo" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12">
+                                <p:panelGrid id="idPanelGrid" style="margin-bottom: 1%;" columns="8" layout="grid" columnClasses=" ladoIzquierdo, ladoDerecho, ladoIzquierdo, ladoDerecho, ladoIzquierdo, ladoDerecho,ladoIzquierdo,ladoDerecho">
+
+
+                                </p:panelGrid>
+
+                            </div>
+                        </div>
+                        <p:dataTable id="dtVehiculo" value="#{listaVehiculoManagedBean.vehiculoList}" var="vehiculo" emptyMessage="Sin resultados."  rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                            <f:facet name="header">
+                                Vehiculos
+                            </f:facet>
+                            <p:column id="idColPlaca" headerText="Placa" filterBy="#{vehiculo.placa}" sortBy="#{vehiculo.placa}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.placa}"/>
+                            </p:column>
+                            <p:column id="idColMarca" headerText="Marca" filterBy="#{vehiculo.marca.nombre}" sortBy="#{vehiculo.marca.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.marca.nombre}"/>
+                            </p:column>
+                            <p:column id="idColLinea" headerText="Linea" filterBy="#{vehiculo.linea.nombre}" sortBy="#{vehiculo.linea.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.linea.nombre}"/>
+                            </p:column>
+                            <p:column id="idColModelo" headerText="Modelo" filterBy="#{vehiculo.modelo}" sortBy="#{vehiculo.modelo}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.modelo}"/>
+                            </p:column>
+                            <p:column id="idColTipoVehiculo" headerText="Tipo vehiculo" filterBy="#{vehiculo.tipo.nombre}" sortBy="#{vehiculo.tipo.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.tipo.nombre}"/>
+                            </p:column>
+                            <p:column id="idColClase" headerText="Clase" filterBy="#{vehiculo.clase.nombre}" sortBy="#{vehiculo.clase.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.clase.nombre}"/>
+                            </p:column>
+                            <p:column id="idColEstatus" headerText="Estatus" filterBy="#{vehiculo.estatus.nombre}" sortBy="#{vehiculo.estatus.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.estatus.nombre}"/>
+                            </p:column>
+                            <p:column id="idColFechaRevision" headerText="Fecha Prox.Revision" filterBy="#{vehiculo.fechaProxRev}" sortBy="#{vehiculo.fechaProxRev}" filterMatchMode="contains">
+                                <h:outputText value="#{vehiculo.fechaProxRev}"/>
+                            </p:column>
+                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:vehiculo:lista:editar')}"  icon="ui-icon-pencil"  title="Editar" outcome="nuevo">
+                                    <f:param name="id" value="#{vehiculo.id}"/>
+                                </p:button>
+                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:vehiculo:lista:eliminar')}"  icon="ui-icon-delete"  title="Borrar" actionListener="#{listaVehiculoManagedBean.eliminar()}" update=":fForm:growl,:fForm:dtVehiculo">
+                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                    <f:param name="id_e" value="#{vehiculo.id}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

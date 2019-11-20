@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Bitacora de Actividades</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Bitacora de Actividades</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12">
+                                <p:panelGrid id="idPanelGrid" style="margin-bottom: 1%;" columns="4" layout="grid" columnClasses=" ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                    <p:outputLabel for="cFechaInicio" value="Fecha Inicio:" />
+                                    <p:calendar id="cFechaInicio" value="#{listaBitacoraActividadManagedBean.fechaInicio}" showOn="button">
+                                        <p:ajax event="dateSelect" listener="#{listaBitacoraActividadManagedBean.onDateSelect()}" update="fForm:growl,fForm:dtBitacoraActividad"/>
+                                    </p:calendar>
+                                    <p:outputLabel for="cFechaFin" value="Fecha Fin:" />
+                                    <p:calendar id="cFechaFin" value="#{listaBitacoraActividadManagedBean.fechaFin}" showOn="button">
+                                        <p:ajax event="dateSelect" listener="#{listaBitacoraActividadManagedBean.onDateSelect()}" update="fForm:growl,fForm:dtBitacoraActividad"/>
+                                    </p:calendar>
+                                </p:panelGrid>
+
+                            </div>
+                        </div>
+
+                        <p:dataTable id="dtBitacoraActividad" value="#{listaBitacoraActividadManagedBean.bitacoraActividadList}" var="bitacoraActividad" emptyMessage="Sin resultados."  rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                            <f:facet name="header">
+                                Bitacora de Actividades
+                            </f:facet>
+                            <p:column id="idColUsuario" headerText="Usuario" filterBy="#{bitacoraActividad.usuario.nombreCompleto}" sortBy="#{bitacoraActividad.usuario.nombreCompleto}" filterMatchMode="contains">
+                                <h:outputText value="#{bitacoraActividad.usuario.nombreCompleto}"/>
+                            </p:column>
+                            <p:column id="idColObjeto" headerText="Objeto" filterBy="#{bitacoraActividad.objeto.nombre}" sortBy="#{bitacoraActividad.objeto.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{bitacoraActividad.objeto.nombre}"/>
+                            </p:column>
+                            <p:column id="idColRegistro" headerText="Registro" filterBy="#{bitacoraActividad.registro}" sortBy="#{bitacoraActividad.registro}" filterMatchMode="contains">
+                                <h:outputText value="#{bitacoraActividad.registro}"/>
+                            </p:column>
+                            <p:column id="idColAccion" headerText="Accion" filterBy="#{bitacoraActividad.accion}" sortBy="#{bitacoraActividad.accion}" filterMatchMode="contains">
+                                <h:outputText value="#{bitacoraActividad.accion}"/>
+                            </p:column>
+                            <p:column id="idColFecha" headerText="Fecha" filterBy="#{bitacoraActividad.fechaActividadF}" sortBy="#{bitacoraActividad.fechaActividadF}" filterMatchMode="contains">
+                                <h:outputText value="#{bitacoraActividad.fechaActividadF}"/>
+                            </p:column>
+                        </p:dataTable>
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

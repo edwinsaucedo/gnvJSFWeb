@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core" 
+      xmlns:p="http://primefaces.org/ui"
+
+      >
+    <!-- xmlns:ui="http://java.sun.com/jsf/facelets"-->
+
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>GNV</title>
+        <h:outputScript name="js/ripple.js" library="serenity-layout" />
+        <h:outputScript name="js/layout.js" library="serenity-layout" />
+        <style type="text/css">
+            .login-button{
+                background: #ffffff !important;
+                border-radius: 25px !important;
+                width: 40% !important;
+                height: 50px !important;
+                color: #555555 !important;
+            }
+            body .ui-button .ui-button-text {
+                font-size: 16px !important;
+            }
+            .login-form-logo {
+                font-size: 60px;
+                color: #333333;
+                display: -webkit-box;
+                display: -webkit-flex;
+                display: -moz-box;
+                display: -ms-flexbox;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                width: 120px;
+                height: 120px;
+                border-radius: 50%;
+                background-color: #fff;
+                margin: 0 auto;
+            }
+            .login-form-title {
+                font-size: 30px;
+                color: #fff;
+                line-height: 1.2;
+                text-align: center;
+                text-transform: uppercase;
+                display: block;
+                margin-bottom: 5%;
+            }
+            body .ui-inputfield {
+                background-image: linear-gradient(to bottom, #FFFFFF, #FFFFFF), linear-gradient(to bottom, #FFFFFF, #FFFFFF) !important;
+                color: #FFFFFF !important;
+            }
+            body .md-inputfield label:not(.ui-selectonemenu-label){
+                color: #FFFFFF;
+                font-size: 16px;
+            }
+            body .md-inputfield input:focus ~ label,
+            body .md-inputfield input.ui-state-filled ~ label,
+            body .md-inputfield textarea:focus ~ label,
+            body .md-inputfield textarea.ui-state-filled ~ label,
+            body .md-inputfield .ui-selectonemenu.ui-state-focus ~ label,
+            body .md-inputfield .ui-selectonemenu.ui-state-filled ~ label,
+            body .md-inputfield .md-inputwrapper-focus ~ label,
+            body .md-inputfield .md-inputwrapper-filled ~ label {
+                color: #FFFFFF !important;
+                font-size: 14px;
+            }
+            </style>
+
+        </h:head>
+
+        <h:body styleClass="login-body">
+        <div class="login-panel ui-fluid">
+            <div class="login-panel-header">
+                <span class="login-form-logo"> 
+                    <p:graphicImage name="images/logo-cytruss.png" library="serenity-layout" />
+                </span>
+            </div>
+            <div class="login-panel-content">
+                <form action="" name="loginform"   method="post">
+                    <span class="login-form-title">BIENVENIDO</span>
+                    <div class="ui-g-12">
+                        <h:panelGroup styleClass="md-inputfield" style="margin-bottom:2%">
+                            <p:inputText id="user" autocomplete="off"/>
+                            <label>Usuario:</label>
+                        </h:panelGroup>
+
+                    </div>
+                    <div class="ui-g-12">
+                        <h:panelGroup styleClass="md-inputfield" style="margin-top:2%">
+                            <p:password id="pass" autocomplete="off"/>
+                            <label>Contraseña:</label>
+                        </h:panelGroup>
+                    </div>
+                    <div class="ui-g-12">
+                        <button value="Login" id="Submit" name="submit" type="submit" class="ui-button ui-widget ui-state-default ui-corner-all login-button" role="button" aria-disabled="false">
+                            <span class="ui-button-text ui-c">Entrar</span>
+                        </button>
+                        <!-- <p:button id="clResetPassAfiliado" outcome="/recuperacion.xhtml"  value="Olvidé mi contraseña"/>  -->
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <h:outputStylesheet name="css/ripple.css" library="serenity-layout" />
+        <h:outputStylesheet name="css/layout-lightblue.css" library="serenity-layout" />
+    </h:body>
+
+</html>

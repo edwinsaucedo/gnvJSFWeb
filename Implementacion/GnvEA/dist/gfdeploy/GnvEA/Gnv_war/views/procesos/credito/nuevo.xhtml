@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+        <script type="text/javascript">
+
+            function fValidaNumerico(pcampo)
+            {
+                var campo = document.getElementById(pcampo);
+                if (isNaN(campo.value))
+                {
+                    setClassError(pcampo);
+                    return false;
+                } else
+                {
+                    setClassNormal(pcampo);
+
+                }
+                return true;
+            }
+
+
+        </script>
+        <script>
+            function disableChoosing() {
+                PF('fileUpwidget').disableButton(PF('fileUpwidget').chooseButton);
+                PF('fileUpwidget').chooseButton.find('input[type="file"]').attr('disabled', 'disabled');
+            }
+
+            function enableChoosing() {
+                if (!PF('fileUpwidget').files.length) {
+                    PF('fileUpwidget').enableButton(PF('fileUpwidget').chooseButton);
+                    PF('fileUpwidget').chooseButton.find('input[type="file"]').removeAttr('disabled');
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">#{nuevoCreditoManagedBean.titulo}</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="frmNuevo">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>#{nuevoCreditoManagedBean.titulo}</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:button   icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" outcome="lista"  id="cbtnGuardar" value="Finalizar" />
+                                </p:toolbarGroup>
+
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbRegresar" value="Regresar" outcome="lista"  icon="ui-icon-keyboard-return" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+
+
+
+        <h:form id="frmBuscarVeh">
+
+            <div id="divui" class="ui-g ui-fluid">
+
+                <div class="ui-g-12">
+
+                    <div class="card">
+                        <p:fieldset legend="Vehículos pertenecientes al crédito" style="margin-bottom:1%">
+
+
+                            <p:growl id="growl1" showDetail="true"/>
+
+                            <p:panelGrid id="idPanelGridV" columns="5"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                <h:outputLabel for="itPlacas" value="Placas:"/>
+                                <p:inputText  id="itPlacas" disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   value="#{nuevoCreditoManagedBean.placa}" >
+                                    <p:ajax event="change" process=" frmBuscarVeh:itPlacas"  listener="#{nuevoCreditoManagedBean.onItPlacaChange()}" update="frmNuevo:growl,frmBuscarVeh"  ></p:ajax>
+
+
+                                </p:inputText>
+
+                                <h:outputLabel for="itVin" value="VIN:"/>
+                                <p:inputText id="itVin" disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  value="#{nuevoCreditoManagedBean.vin}"  >
+                                    <p:ajax  process="frmBuscarVeh:itVin" event="change"  listener="#{nuevoCreditoManagedBean.onItPlacaChange()}" update="frmNuevo:growl,frmBuscarVeh"  >
+                                    </p:ajax>
+                                </p:inputText>
+                                <h:panelGrid columns="1">
+                                    <p:commandButton process="@this" disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"    icon="ui-icon-search" oncomplete="PF('dlgConsultarVehiculo').show()"  id="cbtnBuscar" value="Buscar"  update="frmBuscarVeh"/>
+
+                                </h:panelGrid>
+
+
+                            </p:panelGrid>
+                            <p:panelGrid layout="grid" columns="8">
+
+                                <h:outputLabel style="font-weight:bold" for="olPlacas" value="Placas:"  />
+                                <h:outputLabel id="olPlacas"  value="#{nuevoCreditoManagedBean.placaPanel}"/>
+
+                                <h:outputLabel style="font-weight:bold" for="olVin" value="VIN :"/>
+                                <h:outputLabel id="olVin" value="#{nuevoCreditoManagedBean.vinPanel}"/>
+
+                                <h:outputLabel style="font-weight:bold" for="olMarca" value="Marca:"/>
+                                <h:outputLabel id="olMarca" value="#{nuevoCreditoManagedBean.marcaPanel}"/>
+
+                                <h:outputLabel style="font-weight:bold" for="olModelo" value="Modelo:"/>
+                                <h:outputLabel id="olModelo" value="#{nuevoCreditoManagedBean.modeloPanel}"/>
+                            </p:panelGrid>
+
+
+
+
+
+
+                        </p:fieldset>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+        <h:form id="frmBuscarPropietario">
+            <p:growl id="growl2" showDetail="true"/>
+            <div id="divui" class="ui-g ui-fluid">
+
+                <div class="ui-g-12">
+
+                    <div class="card">
+                        <p:fieldset legend="Personas vinculadas al crédito" style="margin-bottom:1%">
+                            <p:tabView id="tabView">
+                                <p:tab title="Relaciones del crédito">
+                                    <p:panelGrid id="idPanelGridP" columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                        <h:outputLabel for="soRelacion" value="Relación:"/>
+                                        <p:selectOneMenu  disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  id="soRelacion" >
+                                            <f:selectItem itemLabel="Pendiente" itemValue="Pendiente"/>
+                                        </p:selectOneMenu>
+
+
+
+                                        <h:outputLabel for="itPropietarioNombre" value="Nombre Propietario:"/>
+                                        <p:inputText disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   id="itPropietarioNombre"  value="#{nuevoCreditoManagedBean.nombrePropietario}"  >
+
+
+                                        </p:inputText>
+
+                                        <h:outputLabel for="itPropietarioApellido" value="Apellido Propietario:"/>
+                                        <p:inputText disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   id="itPropietarioApellido"  value="#{nuevoCreditoManagedBean.apellidoPropietario}"  >
+                                            <p:ajax event="change" process=" frmBuscarPropietario:tabView:itPropietarioApellido,frmBuscarPropietario:tabView:itPropietarioNombre"  listener="#{nuevoCreditoManagedBean.buscarPropietario()}" update="frmBuscarPropietario,frmBuscarPropietario:growl2"  ></p:ajax>
+
+                                        </p:inputText>
+
+
+
+                                        <h:panelGrid  columns="1">
+                                            <p:commandButton style=" text-align: right; align-items:  flex-end; align-content:  flex-end; float: right;" process="@this" disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}" actionListener="#{nuevoCreditoManagedBean.abrirBusquedaPropietario()}"  icon="ui-icon-search" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left"   id="cbtnBuscarp" value="Buscar"  update="frmBuscarPropietario"/>
+
+                                        </h:panelGrid>
+
+                                    </p:panelGrid>
+
+
+                                    <p:panelGrid columns="4" layout="grid">
+
+                                        <h:outputLabel style="font-weight:bold" for="olPropietarioPanel" value="Propietario:"/>
+                                        <h:outputLabel id="olPropietarioPanel" value="#{nuevoCreditoManagedBean.propietarioPanel}"/>
+
+                                        <h:outputLabel style="font-weight:bold" for="olTipoDocPanel" value="Tipo documentación:"/>
+                                        <h:outputLabel id="olTipoDocPanel" value="#{nuevoCreditoManagedBean.tipoDocumentacion}"/>
+
+                                    </p:panelGrid>
+
+
+
+                                </p:tab> 
+                            </p:tabView>
+                        </p:fieldset>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+
+        <h:form id="frmCredito">
+            <div id="divui" class="ui-g ui-fluid">
+
+                <div class="ui-g-12">
+
+                    <div class="card">
+                        <p:fieldset legend="Información principal" style="margin-bottom:1%">
+                            <p:panelGrid id="idPanelGridC" columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                <h:outputLabel for="itNumeroCredito" value="Número de crédito:"/>
+                                <p:inputText  disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  onclick="return false;" id="itNumeroCredito" maxlength="10"  value="#{nuevoCreditoManagedBean.numeroCredito}"/>
+
+                                <h:outputLabel for="itDigito" value="Dígito verificador:"/>
+                                <p:inputText disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  onclick="return false;" id="itDigito" maxlength="10" value="#{nuevoCreditoManagedBean.digito}"/>
+
+                                <h:outputLabel for="soFinanciera" value="Financiera:" />
+                                <p:selectOneMenu disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  id="soFinanciera" value="#{nuevoCreditoManagedBean.financiera}"  required="true" requiredMessage="Debe ingresar una financiera" converter="#{financieraConverter}">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoCreditoManagedBean.financieraList}" var="f" itemLabel="#{f.nombre}" itemValue="#{f}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="soTaller" value="Taller:"/>
+                                <p:selectOneMenu disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  id="soTaller" value="#{nuevoCreditoManagedBean.taller}" required="true" requiredMessage="Debe ingresar un taller" converter="#{tallerConverter}">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoCreditoManagedBean.tallerList}" var="t" itemLabel="#{t.nombre}" itemValue="#{t}"/>
+                                </p:selectOneMenu>  
+
+                                <h:outputLabel for="soTipoC" value="Tipo Crédito:"/>
+                                <p:selectOneMenu disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  id="soTipoC" value="#{nuevoCreditoManagedBean.tipoCredito}" converter="#{tipoCreditoConverter}" required="true"  requiredMessage="Tipo de crédito requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoCreditoManagedBean.tipoCreditoList}" var="tc" itemLabel="#{tc.nombre}" itemValue="#{tc}"/>
+                                </p:selectOneMenu>  
+
+                                <p:outputLabel for="dpFechaAut" value="Fecha de autorización:" />
+                                <p:calendar  disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  id="dpFechaAut" showOn="button" pattern="dd/MM/yyyy" value="#{nuevoCreditoManagedBean.credito.fechaAut}" required="true"  requiredMessage="Fecha requerido." />
+
+                                <p:outputLabel for="dpFechaDes" value="Fecha de desembolso:" />
+                                <p:calendar disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   id="dpFechaDes" showOn="button" pattern="dd/MM/yyyy" value="#{nuevoCreditoManagedBean.credito.fechaDes}" required="true"  requiredMessage="Fecha requerido." />  
+
+                                <h:outputLabel for="soEstatus" value="Estado del crédito:"/>
+                                <p:selectOneMenu disabled="#{nuevoCreditoManagedBean.estatusActivado}"  id="soEstatus" value="#{nuevoCreditoManagedBean.estatus}" converter="#{estatusConverter}" required="true" requiredMessage="Estado de crédito requerido." >
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoCreditoManagedBean.estatusList}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="soTipoRec" value="Tipo recaudo:"/>
+                                <p:selectOneMenu disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  id="soTipoRec" value="#{nuevoCreditoManagedBean.tipoRecaudacion}" required="true" requiredMessage="Tipo de recaudación requerido." >
+                                    <f:selectItem itemLabel="Por porcentaje" itemValue="1"/>
+                                    <f:selectItem itemLabel="Valor fijo" itemValue="2"/>
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="itBaseRec" value="Base de recaudo:"/>
+                                <p:inputNumber disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   onclick="return false;" id="itBaseRec"   value="#{nuevoCreditoManagedBean.credito.baseRecaudo}" required="true"  requiredMessage="Base de recaudo requerido."/>
+
+                                <h:outputLabel for="itConMin" value="Consumo mínimo:"/>
+                                <p:inputNumber disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   onclick="return false;" id="itConMin" required="true"  requiredMessage="Consumo mínimo requerido."   value="#{nuevoCreditoManagedBean.credito.consumoMinimo}"/>
+
+                                <h:outputLabel for="itPlazo" value="Plazo:"/>
+                                <p:inputText disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   onclick="return false;" id="itPlazo" required="true"  requiredMessage="Plazo requerido."  value="#{nuevoCreditoManagedBean.credito.plazo}"/>
+
+                                <h:outputLabel for="soFormaPago" value="Forma pago recaudo:"/>
+                                <p:selectOneMenu disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  id="soFormaPago" value="#{nuevoCreditoManagedBean.formaPago}" required="true" requiredMessage="Tipo de recaudación requerido." >
+                                    <f:selectItem itemLabel="Contado" itemValue="1"/>
+                                    <f:selectItem itemLabel="Crédito" itemValue="2"/>
+
+                                </p:selectOneMenu>
+
+                                <h:outputLabel for="itMontoSol" value="Monto solicitado:"/>
+                                <p:inputNumber disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   onclick="return false;" id="itMontoSol" required="true"  requiredMessage="Monto solicitado requerido."   value="#{nuevoCreditoManagedBean.credito.montoSolicitado}"/>
+
+                                <h:outputLabel for="itAnticipo" value="Anticipo:"/>
+                                <p:inputNumber disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   onclick="return false;" id="itAnticipo" required="true"  requiredMessage="Anticipo requerido."   value="#{nuevoCreditoManagedBean.credito.anticipo}"/>
+
+                                <h:outputLabel for="itInteres" value="Interés:"/>
+                                <p:inputNumber disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   onclick="return false;" id="itInteres" required="true"  requiredMessage="Interés requerido."  value="#{nuevoCreditoManagedBean.credito.interes}"/>
+
+                                <h:outputLabel for="itMontoCred" value="Monto del crédito:"/>
+                                <p:inputNumber disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"   onclick="return false;" id="itMontoCred" required="true"  requiredMessage="Monto del crédito requerido."   value="#{nuevoCreditoManagedBean.credito.montoCredito}"/>
+
+                                <h:panelGrid columns="2" style="border: none; outline: none">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:creditos:nuevo:guardar')}" disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"    icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" actionListener="#{nuevoCreditoManagedBean.guardarCredito()}" id="cbtnGuardar" value="Guardar"  update="frmNuevo:growl,frmCredito,frmBuscarVeh, frmBuscarPropietario"/>
+                                    <p:commandButton style="width:125%;"     icon="ui-icon-plus"    onclick="PF('dlgEds').show()" id="cbtnAsociar" value="Asociar-EDS"   />
+                                </h:panelGrid>
+                            </p:panelGrid>
+
+
+
+                        </p:fieldset>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <h:form id="frmMetas">
+            <div id="divui" class="ui-g ui-fluid">
+
+                <div class="ui-g-12">
+
+                    <div class="card">
+                        <p:fieldset legend="Metas del recaudo" style="margin-bottom:1%">
+                            <h:panelGrid columns="1" style="margin-bottom:10px" cellpadding="5">
+                                <p:selectBooleanCheckbox value="#{nuevoCreditoManagedBean.metas}" itemLabel="Habilitar metas">
+                                    <p:ajax update="frmMetas" />
+                                </p:selectBooleanCheckbox>
+
+                            </h:panelGrid>
+                            <br/>
+                            <br/>
+
+
+
+                            <p:tabView  rendered="#{nuevoCreditoManagedBean.metas}" id="tabViewMetas" >
+                                <p:tab title="Metas generales">
+                                    <p:panelGrid style="border: none" id="idPanelGridM" columns="2"  layout="grid">
+                                        <p:panel id="pTipoMeta" header="Tipo de meta"  style="margin-bottom:30px">
+
+                                            <p:panelGrid style="font-size:12px"  columns="2"  layout="grid">
+                                                <p:selectOneRadio required="true" requiredMessage="Tipo de meta requerido" style="font-size:12px"  columns="1" layout="grid"  id="metas" value="#{nuevoCreditoManagedBean.tipoMeta}" unselectable="true">
+                                                    <f:selectItem   itemLabel="Valor mínimo de recaudo" itemValue="1" />
+                                                    <f:selectItem   itemLabel="Litros mínimos a recaudar"  itemValue="2" />
+
+                                                </p:selectOneRadio>
+                                            </p:panelGrid>
+
+
+                                        </p:panel>
+                                        <p:panel id="pTipoPagos" header="Tipo pagos" style="margin-bottom:20px">
+
+                                            <p:panelGrid  style="font-size:12px; border: none"  columns="1"  layout="grid">
+                                                <p:selectOneRadio required="true" requiredMessage="Tipo de pago requerido" columns="1" layout="grid"  id="pagos" value="#{nuevoCreditoManagedBean.tipoPago}" unselectable="true">
+                                                    <f:selectItem itemLabel="Facturación mensual" itemValue="1" />
+                                                    <f:selectItem itemLabel="Saldo acumulado" itemValue="2" />
+
+                                                </p:selectOneRadio>
+                                            </p:panelGrid>
+
+                                        </p:panel>
+
+                                    </p:panelGrid>
+                                    <p:panelGrid  style="border: none" layout="grid" columns="6">
+
+                                        <h:outputLabel  for="itValorMeta" value="Valor de la meta:"/>
+                                        <p:inputNumber required="true" requiredMessage="Valor de la meta requerido"  onclick="return false;" id="itValorMeta"   value="#{nuevoCreditoManagedBean.valorMeta}"/>
+
+                                        <h:outputLabel for="itDias" value="Días de aviso"/>
+                                        <p:inputText required="true" requiredMessage="Días de aviso requerido"   onclick="return false;" id="itDias"   value="#{nuevoCreditoManagedBean.diasAviso}"/>
+
+                                        <p:selectBooleanCheckbox style="font-size:12px;" value="#{nuevoCreditoManagedBean.proporcion}" itemLabel="Proporción ">    <p:ajax /> </p:selectBooleanCheckbox>
+                                        <p:selectBooleanCheckbox style="font-size:12px;" value="#{nuevoCreditoManagedBean.bloqueo}" itemLabel="Sigue recaudando"> <p:ajax /></p:selectBooleanCheckbox>
+                                    </p:panelGrid>
+                                    <p:panelGrid  style="border: none" layout="grid" columns="8">
+                                        <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:creditos:nuevo:guardar:metageneral')}"   icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" actionListener="#{nuevoCreditoManagedBean.guardarMetas()}" id="cbtnGuardarM" value="Guardar"  update="frmNuevo:growl"/>
+                                    </p:panelGrid>
+
+                                </p:tab>
+                                <p:tab title="Metas mensuales">
+                                    <p:panelGrid  style="border: none" layout="grid" columns="6">
+
+                                        <h:outputLabel for="itMetaMes" value="Mes:"/>
+                                        <p:inputText  onclick="return false;" required="true" requiredMessage="Debe ingresar mes" id="itMetaMes"    value="#{nuevoCreditoManagedBean.metaMes}"/>
+
+                                        <h:outputLabel for="itValorMensual" value="Valor de la meta mensual:"/>
+                                        <p:inputNumber  onclick="return false;" required="true" requiredMessage="Debe ingresar valor mensual" id="itValorMensual"   value="#{nuevoCreditoManagedBean.valorMensual}"/>
+
+                                    </p:panelGrid>
+                                    <p:panelGrid  style="border: none" layout="grid" columns="8">
+                                        <p:commandButton  rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:creditos:nuevo:guardar:metamensual')}"  icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" actionListener="#{nuevoCreditoManagedBean.guardarMetaMes()}" id="cbtnGuardarMM" value="Guardar"  update="frmNuevo:growl"/>
+                                    </p:panelGrid>
+
+                                </p:tab>
+                            </p:tabView>
+
+                        </p:fieldset>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:fieldset id="fsSubirDocumentos" legend="Cargar archivos como soporte de crédito " style="margin-bottom:5%;">
+
+                        <h:form id="frmDocumento">
+                            <p:growl id="messages" showDetail="true" />
+
+                            <p:panelGrid id="idPanelGridc" columns="2" layout="grid" style="margin-bottom:1%"> 
+                                <h:outputLabel for="fuButton" value="Seleccionar documento: "/>
+                                <p:fileUpload rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:creditos:nuevo:cargar:documentos')}" label="Examinar" fileUploadListener="#{nuevoCreditoManagedBean.guardarDocumentos}" mode="advanced" widgetVar="fileUpwidget" id="fuButton" sizeLimit="5000000"  fileLimit="100" multiple="false" auto="true" dragDropSupport="false" onstart="disableChoosing()" skinSimple="true" update="frmdtFiles:dtFiles, frmNuevo" oncomplete="enableChoosing()"/>
+
+                            </p:panelGrid>  
+
+                        </h:form>
+
+
+
+
+                        <h:form id="frmdtFiles">
+                            <p:dataTable id="dtFiles" tableStyle="table-layout:auto" value="#{nuevoCreditoManagedBean.documentoList}" paginator="true" var="documento" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"  style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center ">
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{documento.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Extension">
+                                    <h:outputText value="#{documento.tipoArchivo.extension}" />
+                                </p:column>
+
+                                <p:column headerText="Acciones" style="text-align: center;">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:creditos:nuevo:descargar:documentos')}" icon="ui-icon-file-download"  title="Descargar"   actionListener="#{nuevoCreditoManagedBean.descargarDocumento(documento.id)}" ajax="false" >
+                                        <p:fileDownload value="#{nuevoCreditoManagedBean.streamedContent}" contentDisposition="inline"/>
+                                    </p:commandButton>
+
+
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:creditos:nuevo:eliminar:documentos')}" id="btnDeleteDoc" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevoCreditoManagedBean.eliminarDocumento()}"  update="dtFiles">
+                                        <p:confirm  header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                        <f:param name="idDoc" value="#{documento.id}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                        </h:form>
+                    </p:fieldset>
+                </div>
+            </div>
+        </div>
+
+
+        <p:dialog widgetVar="dlgEds" modal="true" position="center center" style="margin-left: 10% ; margin-right: 10%" draggable="false" responsive="true">
+            <f:facet name="header">
+                <h:outputText id="dialogEds" value="Asociar estación de surtido."/>
+            </f:facet>
+            <h:form id="frmAsociarEds">
+                <p:growl id="grlEds" showDetail="true"/>
+
+
+                <p:dataTable id="dtEstacion" selection="#{nuevoCreditoManagedBean.edsSelectionList}"  rowKey="#{eds.id}" value="#{nuevoCreditoManagedBean.edsList}" var="eds" emptyMessage="Sin resultados."  rows="10"
+                             paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,15">
+                    <f:facet name="header">
+                        Estación
+                    </f:facet>
+                    <p:column id="idColNombre" headerText="Estación" filterBy="#{eds.nombre}" sortBy="#{eds.nombre}" filterMatchMode="contains">
+                        <h:outputText value="#{eds.nombre}"/>
+                    </p:column>
+
+                    <p:column id="idColEmpresa" headerText="Empresa" filterBy="#{eds.empresa.nombre}" sortBy="#{eds.empresa.nombre}" filterMatchMode="contains">
+                        <h:outputText value="#{eds.empresa.nombre}"/>
+                    </p:column>
+
+                    <p:column id="idColCiudad" headerText="Ciudad" filterBy="#{eds.ciudad.nombre}" sortBy="#{eds.ciudad.nombre}" filterMatchMode="contains">
+                        <h:outputText value="#{eds.ciudad.nombre}"/>
+                    </p:column>
+                    <p:column selectionMode="multiple" style="width:16px;text-align:center"/>
+                    <f:facet name="footer">
+
+                    </f:facet>
+                </p:dataTable>
+                <p:commandButton  style="margin-bottom:1%; margin-top: 2%; float: right"   update="frmAsociarEds" icon="ui-icon-save"  value="Guardar" actionListener="#{nuevoCreditoManagedBean.asociarEds()}" />
+            </h:form>
+        </p:dialog>
+
+        <p:dialog widgetVar="dlgConsultarVehiculo" modal="true"   responsive="true" width="800" height="400" draggable="false" position="center center">
+            <f:facet name="header">
+                <h:outputText id="dlgConsultarVehiculoHeader" value="Buscar Vehiculo"/>
+            </f:facet>
+            <h:form id="frmConsultarVehiculo">
+                <p:panelGrid id="pgVehiculo"  layout="grid" columns="4"> 
+                    <p:outputLabel value="Placa vehiculo:" for="itPlaca"/>
+                    <p:inputText id="itPlaca" value="#{nuevoCreditoManagedBean.placa}" onkeyup="onItPlacaKeyUp()"/>
+                    <p:outputLabel value="Vin vehiculo:" for="itVin"/>
+                    <p:inputText id="itVin" value="#{nuevoCreditoManagedBean.vin}" onkeyup="onItPlacaKeyUp()"/>
+                </p:panelGrid>
+                <p:remoteCommand name="onItPlacaKeyUp" update="frmConsultarVehiculo:dtVehiculos" actionListener="#{nuevoCreditoManagedBean.onItPlacaKeyUp()}"/>
+                <div class="ui-grid-row" style="margin-top:3%;">
+                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                        <p:dataTable id="dtVehiculos" value="#{nuevoCreditoManagedBean.vehiculoList}" reflow="true" paginator="true" var="vehiculo" emptyMessage="Sin resultados." rows="5" 
+                                     selectionMode="single"  rowKey="#{vehiculo.id}" scrollable="true"
+                                     >
+                            <p:ajax event="rowDblselect" listener="#{nuevoCreditoManagedBean.onDtVehiculosRowDobleClick}" update="frmBuscarVeh" oncomplete="PF('dlgConsultarVehiculo').hide()" global="false"/>
+                            <f:facet name="header">
+                                Vehiculos
+                            </f:facet>
+                            <p:column id="idColId" headerText="ID" visible="false">
+                                <h:outputText value="#{vehiculo.id}" />
+                            </p:column>
+                            <p:column id="idColPlaca" headerText="Placa">
+                                <h:outputText value="#{vehiculo.placa}" />
+                            </p:column>
+                            <p:column id="idColVin" headerText="VIN">
+                                <h:outputText value="#{vehiculo.vin}" />
+                            </p:column>
+                            <p:column id="idColModelo" headerText="Modelo">
+                                <h:outputText value="#{vehiculo.modelo}" />
+                            </p:column>
+                        </p:dataTable>
+
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+        <p:dialog widgetVar="dlgConsultarPropietario" modal="true"   responsive="true" width="800" height="400" draggable="false" position="center center">
+            <f:facet name="header">
+                <h:outputText id="dlgPropietarioHeader" value="Buscar Propietario"/>
+            </f:facet>
+            <h:form id="frmConsultarPropietario">
+                <p:panelGrid id="pgPropietario"  layout="grid" columns="4"> 
+                    <p:outputLabel value="Nombre del propietario:" for="itPropietario"/>
+                    <p:inputText id="itPropietario" value="#{nuevoCreditoManagedBean.nombreCompleto}" onkeyup="onItPropietarioKeyUp()"/>
+                </p:panelGrid>
+                <p:remoteCommand name="onItPropietarioKeyUp" update="frmConsultarPropietario:dtPropietarios" actionListener="#{nuevoCreditoManagedBean.onItPropietarioKeyUp()}"/>
+                <div class="ui-grid-row" style="margin-top:3%;">
+                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                        <p:dataTable  id="dtPropietarios" selectionMode="single"  rowKey="#{propietario.id}" scrollable="true"   tableStyle="table-layout:auto" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                      rowsPerPageTemplate="5,10,15" var="propietario" value="#{nuevoCreditoManagedBean.propietarioList}">
+
+                            <p:ajax disabled="#{nuevoCreditoManagedBean.creditoInfoDisabled}"  event="rowDblselect"  listener="#{nuevoCreditoManagedBean.onDtPropietarioRowDobleClick}" oncomplete="PF('dlgConsultarPropietario').hide()" global="false" update="frmBuscarPropietario"/>
+                            <p:column headerText="Propietario:">
+                                <h:outputText value="#{propietario.propietario.nombreCompleto}" />
+                            </p:column>
+                            <p:column headerText="Tipo de documentación:">
+                                <h:outputText value="#{propietario.propietario.tipoDocumentacion.nombre}" />
+                            </p:column>
+
+
+                        </p:dataTable>
+
+
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+
+
+    </ui:define>
+
+
+</ui:composition>

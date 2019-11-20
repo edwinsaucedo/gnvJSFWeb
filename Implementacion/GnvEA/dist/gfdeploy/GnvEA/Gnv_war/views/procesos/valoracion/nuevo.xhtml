@@ -1,0 +1,493 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+        <script type="text/javascript">
+
+            function fValidaNumerico(pcampo)
+            {
+                var campo = document.getElementById(pcampo);
+                if (isNaN(campo.value))
+                {
+                    setClassError(pcampo);
+                    return false;
+                } else
+                {
+                    setClassNormal(pcampo);
+
+                }
+                return true;
+            }
+
+
+        </script>
+        <script>
+            function disableChoosing() {
+                PF('fileUpwidget').disableButton(PF('fileUpwidget').chooseButton);
+                PF('fileUpwidget').chooseButton.find('input[type="file"]').attr('disabled', 'disabled');
+            }
+
+            function enableChoosing() {
+                if (!PF('fileUpwidget').files.length) {
+                    PF('fileUpwidget').enableButton(PF('fileUpwidget').chooseButton);
+                    PF('fileUpwidget').chooseButton.find('input[type="file"]').removeAttr('disabled');
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">#{nuevoValoracionManagedBean.titulo}</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="frmNuevo">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>#{nuevoValoracionManagedBean.titulo}</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:valoracion:nuevo:guardar')}" disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" action="#{nuevoValoracionManagedBean.guardar()}" id="cbtnGuardar" value="Guardar"  update="growl,frmNuevo,frmBuscarVeh"/>
+                                </p:toolbarGroup>
+
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbRegresar" value="Regresar" outcome="lista"  icon="ui-icon-keyboard-return" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+                                <p:fieldset  id="fsValoracion" legend="Información de la valoración " style="margin-bottom:5%;">
+
+                                    <p:panelGrid style="margin-bottom:1%" id="idPanelGrid" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+
+                                        <h:outputLabel for="soTaller" value="Taller: "/>
+                                        <p:selectOneMenu disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="soTaller" value="#{nuevoValoracionManagedBean.taller}" converter="#{tallerConverter}" required="true" requiredMessage="Taller requerido.">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevoValoracionManagedBean.listaTaller}" var="t" itemLabel="#{t.nombre}" itemValue="#{t}"/>
+                                        </p:selectOneMenu>
+
+
+                                        <h:outputLabel for="itPresupuesto" value="Presupuesto:"/>
+                                        <p:inputNumber disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="itPresupuesto" required="true" value="#{nuevoValoracionManagedBean.valoracion.presupuesto}" onkeyup="fValidaNumerico(this.id)" requiredMessage="Presupuesto requerido."/>
+
+                                        <p:outputLabel for="dpFecha" value="Fecha de valoración:" />
+                                        <p:calendar disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="dpFecha" showOn="button" pattern="dd/MM/yyyy" value="#{nuevoValoracionManagedBean.fecha}" required="true"  requiredMessage="Fecha requerido." />
+
+                                        <h:outputLabel for="soEstatus" value="Estado de valoración: "/>
+                                        <p:selectOneMenu disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}"  id="soEstatus"  value="#{nuevoValoracionManagedBean.estatus}" >
+                                            <f:selectItem itemLabel="Apto para conversión" itemValue="#{true}" />
+                                            <f:selectItem itemLabel="No apto para conversión" itemValue="#{false}" />
+                                        </p:selectOneMenu> 
+
+                                        <h:outputLabel for="itObservacion" value="Observación:"/>
+                                        <p:inputTextarea  disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="itObservacion"   value="#{nuevoValoracionManagedBean.valoracion.observacion}"/> 
+
+                                        <h:outputLabel for="rbCredito" value="Solicitar crédito: "/>
+                                        <p:selectOneRadio disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="rbCredito" value="#{nuevoValoracionManagedBean.solicitarCredito}" >
+                                            <f:selectItem itemLabel="Si" itemValue="#{true}" />
+                                            <f:selectItem itemLabel="No" itemValue="#{false}" />
+
+                                        </p:selectOneRadio>
+
+                                    </p:panelGrid>
+                                </p:fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+        </h:form>
+
+
+        <h:form id="frmBuscarVeh" >
+            <div id="divui" class="ui-g ui-fluid">
+
+                <div class="ui-g-12">
+
+                    <div class="card">
+
+                        <p:tabView id="tabView" >
+
+                            <p:tab id="tab" title="Vehículo">
+                                <p:growl id="growl" showDetail="true"/>
+
+                                <p:panelGrid id="idPanelGridV" columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                    <h:outputLabel for="itPlacas" value="Placas:"/>
+                                    <p:inputText disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="itPlacas"  value="#{nuevoValoracionManagedBean.placa}"    onkeypress="if (event.keyCode === 13) {
+
+                                                return true;
+                                            }" >
+                                        <p:ajax event="change" process=" frmBuscarVeh:tabView:itPlacas"  listener="#{nuevoValoracionManagedBean.buscar()}" update="growl,frmDtVeh,dtPropietarios,olPlacas,olVin,olMarca"  ></p:ajax>
+
+                                    </p:inputText>
+
+                                    <h:outputLabel for="itVin" value="VIN:"/>
+                                    <p:inputText disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" onclick="return false;" id="itVin"  value="#{nuevoValoracionManagedBean.vin}"   onkeypress="if (event.keyCode === 13) {
+
+                                                return true;
+                                            }" >
+                                        <p:ajax  process="frmBuscarVeh:tabView:itVin" event="change"  listener="#{nuevoValoracionManagedBean.buscar()}" update="growl,frmDtVeh,dtPropietarios,olPlacas,olVin,olMarca"  >
+                                        </p:ajax>
+                                    </p:inputText>
+
+
+
+
+
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:valoracion:nuevo:guardar:vehiculo')}" disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}"   icon="ui-icon-search"  id="cbtnBuscar" value="Buscar"  onclick="PF('dlgBuscarVeh').show()"   style=" width:130%; margin-right:10%" update="frmDtVeh"   />
+
+
+
+                                    <p:commandButton disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}"  update="frmBuscarVeh,frmNuevoVehiculo" actionListener="#{nuevoValoracionManagedBean.nuevoVehiculo()}" icon="ui-icon-add"  id="cbtnNuevo" value="Nuevo" style=" width:70%; margin-left:10%"  />
+
+                                    <h:outputLabel style="font-weight:bold" for="olPlacas" value="Placas:"  />
+                                    <h:outputLabel id="olPlacas"  value="#{nuevoValoracionManagedBean.placaPanel}"/>
+
+                                    <h:outputLabel style="font-weight:bold" for="olVin" value="VIN :"/>
+                                    <h:outputLabel id="olVin" value="#{nuevoValoracionManagedBean.vinPanel}"/>
+
+                                    <h:outputLabel style="font-weight:bold" for="olMarca" value="Marca:"/>
+                                    <h:outputLabel id="olMarca" value="#{nuevoValoracionManagedBean.marcaPanel}"/>
+                                </p:panelGrid>
+                                    
+
+                                <div  style=" width: 100%; align-content: center; align-items: center; alignment-baseline: central;alignment-adjust: central">                 
+                                    
+
+                               <!--     <p:panelGrid id="panelInfo" columns="2">
+
+                                        <h:outputLabel for="olPlacas" value="Placas:"  />
+                                        <h:outputLabel id="olPlacas"  value="#{nuevoValoracionManagedBean.placaPanel}"/>
+
+                                        <h:outputLabel for="olVin" value="VIN :"/>
+                                        <h:outputLabel id="olVin" value="#{nuevoValoracionManagedBean.vinPanel}"/>
+
+                                        <h:outputLabel for="olMarca" value="Marca:"/>
+                                        <h:ou tputLabel id="olMarca" value="#{nuevoValoracionManagedBean.marcaPanel}"/>
+
+
+
+                                    </p:panelGrid>
+                               -->
+
+
+                                    <br/>
+
+                                    <p:dataTable  id="dtPropietarios"  tableStyle="table-layout:auto" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                  rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center " var="propietario" value="#{nuevoValoracionManagedBean.vePropietarioListBusqueda}">
+                                        <p:column headerText="Propietarios">
+                                            <h:outputText value="#{propietario.propietario.nombreCompleto}" />
+                                        </p:column>
+
+
+                                    </p:dataTable>
+
+
+                                </div>
+
+                            </p:tab>
+
+                        </p:tabView>
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:fieldset id="fsSubirDocumentos" legend="Cargar archivos como soporte de la valoración " style="margin-bottom:5%;">
+
+                        <h:form id="frmDocumento">
+                            <p:growl id="messages" showDetail="true" />
+
+                            <p:panelGrid id="idPanelGridVehiculoInfAdc" columns="2" layout="grid" style="margin-bottom:1%">
+                                <h:outputLabel for="isPublico"  value="Público:" />
+                                <p:inputSwitch id="isPublico" value="#{nuevoValoracionManagedBean.publico}" >
+                                    <p:ajax />
+                                </p:inputSwitch>
+                                <h:outputLabel for="fuButton" value="Seleccionar documento: "/>
+                                <p:fileUpload rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:valoracion:nuevo:cargar:documentos')}" label="Examinar" fileUploadListener="#{nuevoValoracionManagedBean.guardarDocumento}" mode="advanced" widgetVar="fileUpwidget" id="fuButton" sizeLimit="5000000"  fileLimit="100" multiple="false" auto="true" dragDropSupport="false" onstart="disableChoosing()" skinSimple="true" update="frmdtFiles:dtFiles, frmNuevo" oncomplete="enableChoosing()"/>
+
+                            </p:panelGrid>  
+
+                        </h:form>
+
+
+
+
+                        <h:form id="frmdtFiles">
+                            <p:dataTable id="dtFiles" tableStyle="table-layout:auto" value="#{nuevoValoracionManagedBean.listaDocumento}" paginator="true" var="documento" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"  style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center ">
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{documento.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Extension">
+                                    <h:outputText value="#{documento.tipoArchivo.extension}" />
+                                </p:column>
+
+                                <p:column headerText="Acciones" style="text-align: center;">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:valoracion:nuevo:descargar:documentos')}" icon="ui-icon-file-download"  title="Descargar"   actionListener="#{nuevoValoracionManagedBean.descargarDocumento(documento.id)}" ajax="false" >
+                                        <p:fileDownload value="#{nuevoValoracionManagedBean.streamedContent}" contentDisposition="inline"/>
+                                    </p:commandButton>
+
+
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:valoracion:nuevo:eliminar:documentos')}" id="btnDeleteCil" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevoValoracionManagedBean.eliminarDocumento()}"  update="dtFiles">
+                                        <p:confirm  header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                        <f:param name="idDoc" value="#{documento.id}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                        </h:form>
+                    </p:fieldset>
+                </div>
+            </div>
+        </div>
+        <br/>
+
+        <p:dialog header="Buscar vehículo" widgetVar="dlgBuscarVeh" modal="true"  height="300" width="80%"  >
+            <h:form id="frmDtVeh">
+                <p:panelGrid id="idPanelGridV" columns="4"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                    <h:outputLabel for="itPlacas" value="Placas:"/>
+                    <p:inputText disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="itPlacas"  value="#{nuevoValoracionManagedBean.placa}"   
+                                 >
+                        <p:ajax event="keyup"   listener="#{nuevoValoracionManagedBean.buscarDialogo()}" update="dtVeh"  ></p:ajax>
+
+                    </p:inputText>
+
+                    <h:outputLabel for="itVin" value="VIN:"/>
+                    <p:inputText disabled="#{nuevoValoracionManagedBean.valoracionInfoDisabled}" id="itVin"  value="#{nuevoValoracionManagedBean.vin}" >
+                        <p:ajax event="keyup"  listener="#{nuevoValoracionManagedBean.buscarDialogo()}" update="dtVeh"  >
+                        </p:ajax>
+                    </p:inputText>
+
+
+
+
+
+                </p:panelGrid>
+
+                <p:dataTable  id="dtVeh"  selectionMode="single"  rowKey="#{vehiculo.id}" scrollable="true" tableStyle="table-layout:auto" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                              rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center " var="vehiculo" value="#{nuevoValoracionManagedBean.listaVehiculo}">
+
+                    <p:ajax event="rowDblselect" listener="#{nuevoValoracionManagedBean.onDtVehiculosRowDobleClick}" oncomplete="PF('dlgBuscarVeh').hide()" global="false" update="frmBuscarVeh,frmBuscarVeh:tabView:dtPropietarios"/>
+                    <p:column headerText="Placa">
+                        <h:outputText value="#{vehiculo.placa}" />
+                    </p:column>
+
+                    <p:column headerText="VIN">
+                        <h:outputText value="#{vehiculo.vin}" />
+                    </p:column>
+
+
+                </p:dataTable>
+            </h:form>
+        </p:dialog>
+
+        <p:dialog header="Nuevo vehículo" widgetVar="dlgVeh" modal="true" style=" height:50%" height="400" width="80%">
+
+
+            <div class="ui-grid-row">
+                <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+                    <p:panelGrid layout="grid" columns="20">
+                        <h:form id="frmNuevoVehiculo">
+                            <p:fieldset legend="Info.Vehiculo" style="margin-bottom:1%">
+
+                                <p:panelGrid id="idPanelGridVehiculo" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                    <h:outputLabel for="soVeTipo" value="Tipo vehiculo"/>
+                                    <p:selectOneMenu disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" id="soVeTipo" value="#{nuevoValoracionManagedBean.veTipo}" converter="#{vehTipoConverter}" required="true" requiredMessage="Tipo de vehiculo requerido.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.veTipoList}" var="vt" itemLabel="#{vt.nombre}" itemValue="#{vt}"/>
+                                    </p:selectOneMenu>
+
+                                    <h:outputLabel for="soVeTipoServicio" value="Tipo de servicio"/>
+                                    <p:selectOneMenu disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" id="soVeTipoServicio" value="#{nuevoValoracionManagedBean.veTipoServicio}" converter="#{vehTipoServicioConverter}" required="true" requiredMessage="Tipo de servicio requerido.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.veTipoServicioList}" var="vts" itemLabel="#{vts.nombre}" itemValue="#{vts}"/>
+                                    </p:selectOneMenu> 
+
+                                    <h:outputLabel for="soVeClase" value="Clase de vehiculo"/>
+                                    <p:selectOneMenu  id="soVeClase" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.veClase}" converter="#{vehClaseConverter}" required="true" requiredMessage="Clase requerida.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.veClaseList}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>
+                                    </p:selectOneMenu>
+
+                                    <h:outputLabel for="soMarca" value="Marca"/>
+                                    <p:selectOneMenu id="soMarca" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.marca}" converter="#{marcaConverter}" required="true" requiredMessage="Marca requerida.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.marcaList}" var="m" itemLabel="#{m.nombre}" itemValue="#{m}"/>
+                                        <p:ajax event="change" listener="#{nuevoValoracionManagedBean.onMarcaChage()}" update=":frmNuevoVehiculo:soLinea"/>
+                                    </p:selectOneMenu>
+
+                                    <h:outputLabel for="soLinea" value="Linea"/>
+                                    <p:selectOneMenu id="soLinea" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.linea}" converter="#{lineaConverter}" required="true" requiredMessage="Linea requerida.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.lineaList}" var="l" itemLabel="#{l.nombre}" itemValue="#{l}"/>
+                                    </p:selectOneMenu> 
+
+                                    <h:outputLabel for="itPlaca" value="Placa"/>
+                                    <p:inputText id="itPlaca" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" required="true" value="#{nuevoValoracionManagedBean.vehiculo.placa}" requiredMessage="Placa requerida." maxlength="10"/>
+
+                                    <h:outputLabel for="itVin" value="VIN:"/>
+                                    <p:inputText id="itVin" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" required="true" value="#{nuevoValoracionManagedBean.vehiculo.vin}" requiredMessage="Folio requerido." maxlength="50"/>
+
+                                    <h:outputLabel for="itEngomadoPatrimonial" value="Engomado Patrimonial:"/>
+                                    <p:inputText id="itEngomadoPatrimonial" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" required="true" value="#{nuevoValoracionManagedBean.vehiculo.engomadoPatrimonial}" requiredMessage="Engomado requerido." maxlength="50"/>
+
+                                    <h:outputLabel for="itModelo" value="Modelo:"/>
+                                    <p:inputText id="itModelo" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" required="true" value="#{nuevoValoracionManagedBean.vehiculo.modelo}" requiredMessage="Modelo requerido." maxlength="4" onkeyup="fValidaNumerico(this.id)"/>
+                                </p:panelGrid>
+
+                            </p:fieldset>
+                            <p:fieldset legend="Info Adi.Vehiculo" style="margin-bottom:1%">
+                                <p:panelGrid id="idPanelGridVehiculoInfAdc" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                    <h:outputLabel for="itTarjetaCirculacion" value="Tarjeta Circulación"/>
+                                    <p:inputText id="itTarjetaCirculacion" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.veInfoA.tarjetaCirculacion}"/>
+                                    <h:outputLabel for="itOrganismo" value="Organismo:"/>
+                                    <p:inputText id="itOrganismo" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.veInfoA.organismo}"/>
+                                    <h:outputLabel for="soPais" value="Pais"/>
+                                    <p:selectOneMenu id="soPais" filter="true" filterMatchMode="startsWith" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.pais}" converter="#{paisConverter}">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.paisList}" var="p" itemLabel="#{p.nombre}" itemValue="#{p}"/>
+                                        <p:ajax event="change" listener="#{nuevoValoracionManagedBean.onPaisChange()}" update="frmNuevoVehiculo:soEstado"/>
+                                    </p:selectOneMenu> 
+                                    <h:outputLabel for="soEstado" value="Estado"/>
+                                    <p:selectOneMenu id="soEstado" filter="true" filterMatchMode="startsWith" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.estado}" converter="#{estadoConverter}">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.estadoList}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                                        <p:ajax event="change" listener="#{nuevoValoracionManagedBean.onEstadoChange()}" update="frmNuevoVehiculo:soCiudad"/>
+                                    </p:selectOneMenu> 
+                                    <h:outputLabel for="soCiudad" value="Ciudad"/>
+                                    <p:selectOneMenu filter="true" filterMatchMode="startsWith" id="soCiudad" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}" value="#{nuevoValoracionManagedBean.ciudad}" converter="#{ciudadConverter}">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevoValoracionManagedBean.ciudadList}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>
+                                    </p:selectOneMenu>
+                                    <h:outputLabel for="cldFechaExpedicion" value="Fecha Expedicion:"/>
+                                    <p:calendar id="cldFechaExpedicion" showOn="button" value="#{nuevoValoracionManagedBean.veInfoA.fechaExpedicion}" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}"/>
+                                </p:panelGrid>
+                            </p:fieldset>
+                            <p:commandButton icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnGuardar" value="Guardar" actionListener="#{nuevoValoracionManagedBean.guardarVehiculo()}" update="frmNuevoVehiculo,frmPropietarioVehiculo,frmDtPropietarioVehiculo,frmBuscarVeh" disabled="#{!nuevoValoracionManagedBean.vehiculoInfoEnabled}"/>
+
+                        </h:form>
+                    </p:panelGrid>
+
+                    <h:form id="frmPropietarioVehiculo">
+                        <p:growl id="growl1" showDetail="true"/>
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+
+                                <p:fieldset rendered="#{nuevoValoracionManagedBean.propietarioInfoVisible}" id="fsPropietario" legend="Info. Propietario" style="margin-bottom:1%">
+                                    <p:panelGrid id="idPanelGridPropietario" columns="3" layout="grid" columnClasses="ladoIzquierdo,ladoDerecho,ladoIzquierdo,ladoDerecho" style="margin-bottom:2%;"> 
+                                        <h:outputLabel for="scbxPropietario" value="Propietarios:" />
+                                        <p:selectCheckboxMenu id="scbxPropietario" label="Seleccione" value="#{nuevoValoracionManagedBean.propietarioListI}" converter="#{propietarioConverter}" multiple="true" filter="true" filterMatchMode="startsWith"  required="true" requiredMessage="Propietario requerido.">
+                                            <f:selectItems value="#{nuevoValoracionManagedBean.propietarioListC}" var="p" itemLabel="#{p.nombreCompleto}" itemValue="#{p}"/>
+                                        </p:selectCheckboxMenu>
+                                        <p:commandButton  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnRegistrarPropietario" icon="ui-icon-plus" title="Agregar Propietario" oncomplete="PF('dlgNuevoPropietario').show()"/>
+
+                                        <p:commandButton icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnGuardarVehiculoProp" value="Vincular propietario" actionListener="#{nuevoValoracionManagedBean.guardarPropietarioVeh()}" update="frmPropietarioVehiculo,frmBuscarVeh,frmPropietarioVehiculo:scbxPropietario,frmDtPropietarioVehiculo:dtVehiculoPropietario"/>
+                                    </p:panelGrid>
+                                </p:fieldset>
+                            </div>
+                        </div>
+                    </h:form>
+                    <h:form id="frmDtPropietarioVehiculo">
+                        <p:growl id="growl2" showDetail="true"/>   
+                        <p:dataTable id="dtVehiculoPropietario" value="#{nuevoValoracionManagedBean.vePropietarioList}" var="vehProp" emptyMessage="Sin resultados."  rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15" >
+                            <f:facet name="header">
+                                Vehiculo Propietarios.
+                            </f:facet>
+                            <p:column id="idColVehProp" headerText="Propieatario" filterBy="#{vehProp.propietario.nombreCompleto}" sortBy="#{vehProp.propietario.nombreCompleto}" filterMatchMode="contains">
+                                <h:outputText value="#{vehProp.propietario.nombreCompleto}"/>
+                            </p:column>
+                            <p:column id="idTelProp" headerText="Telefono" filterBy="#{vehProp.propietario.telefono}" sortBy="#{vehProp.propietario.telefono}" filterMatchMode="contains">
+                                <h:outputText value="#{vehProp.propietario.telefono}"/>
+                            </p:column>
+                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                <p:commandButton icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevoValoracionManagedBean.eliminarVehPropietario()}" update="frmDtPropietarioVehiculo,frmDtPropietarioVehiculo:dtVehiculoPropietario">
+                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                    <f:param name="id_e" value="#{vehProp.id}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                        <p:commandButton style="margin-bottom:1%; margin-top: 2%; float: right"  icon="ui-icon ui-icon-check" value="Finalizar" id="finalizar"  oncomplete="PF('dlgVeh').hide()"/>
+                    </h:form>
+                </div>
+            </div>
+
+
+        </p:dialog>
+        <p:dialog widgetVar="dlgNuevoPropietario" modal="true" position="center center" draggable="false" responsive="true">
+            <f:facet name="header">
+                <h:outputText id="dialogBeneficiarioHeader" value="Agregar Propietario."/>
+            </f:facet>
+            <h:form id="frmNuevoPropietario">
+                <p:growl id="grlNuevoPropietario" showDetail="true"/>
+
+                <h:panelGrid id="pgNuevoPropietario" columns="2" style="margin-top:1%; margin-bottom: 3%;">  
+                    <h:outputLabel for="soTipoDoc" value="Tipo Documentacion:"/>
+                    <p:selectOneMenu id="soTipoDoc" value="#{nuevoValoracionManagedBean.tipoDocumentacion}" converter="#{tipoDocumentoConverter}" required="true" requiredMessage="Tipo de documentacion requerida.">
+                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                        <f:selectItems value="#{nuevoValoracionManagedBean.tipoDocumentacionList}" var="td" itemLabel="#{td.nombre}" itemValue="#{td}"/>
+                    </p:selectOneMenu>
+                    <h:outputLabel for="itNombre" value="Nombre:"/>
+                    <p:inputText id="itNombre" required="true" value="#{nuevoValoracionManagedBean.propietario.nombre}" requiredMessage="Nombre requerido."/>
+                    <h:outputLabel for="itApellido" value="Apellido:"/>
+                    <p:inputText id="itApellido" required="true" value="#{nuevoValoracionManagedBean.propietario.apellido}" requiredMessage="Apellido requerido."/>
+                    <h:outputLabel for="itNumeroIdentificacion" value="N° Identificacion:"/>
+                    <p:inputText id="itNumeroIdentificacion" required="true" value="#{nuevoValoracionManagedBean.propietario.numeroIdentificacion}" requiredMessage="N° identificacion requerido." maxlength="50"/>
+                    <h:outputLabel for="itTelefono" value="Telefono:"/>
+                    <p:inputText id="itTelefono" required="true" value="#{nuevoValoracionManagedBean.propietario.telefono}" requiredMessage="Telefono requerido." maxlength="15" onkeyup="fValidaNumerico(this.id)"/>
+                </h:panelGrid>
+                <p:commandButton style="margin-bottom:1%; margin-top: 2%; float: right"  icon="ui-icon ui-icon-save" value="Guardar" id="btnGuardarProp" update="frmNuevoPropietario,frmPropietarioVehiculo:scbxPropietario" actionListener="#{nuevoValoracionManagedBean.guardarPropietario()}"/>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+
+
+</ui:composition>

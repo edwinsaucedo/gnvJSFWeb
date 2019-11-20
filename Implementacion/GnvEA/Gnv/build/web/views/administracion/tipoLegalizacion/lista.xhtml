@@ -1,0 +1,57 @@
+ <ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Lista de tipo de legalización</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Lista de tipo de legalización</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                             <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:tipo_legalizacion:lista:nuevo')}" id="cmbNuevo" value="Nuevo" icon="ui-icon-add" outcome="nuevo" />
+                                </p:toolbarGroup>
+                            </p:toolbar> 
+                        </div>
+
+                        <p:dataTable id="dtTipoLegalizacion" value="#{listaTipoLegalizacionManagedBean.tipoLegalizacionList}" var="tipoLegalizacion" emptyMessage="Sin resultados."  rows="10"
+                                             paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15">
+                                    <f:facet name="header">
+                                        Tipo de legalización
+                                    </f:facet>
+                          <p:column id="idColNombre" headerText="Nombre" filterBy="#{tipoLegalizacion.nombre}" sortBy="#{tipoLegalizacion.nombre}" filterMatchMode="contains">
+                                    <h:outputText value="#{tipoLegalizacion.nombre}"/>
+                                    </p:column>
+                                    <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                        <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:tipo_legalizacion:lista:editar')}" icon="ui-icon-pencil"  title="Editar" outcome="nuevo">
+                                            <f:param name="id" value="#{tipoLegalizacion.id}"/>
+                                        </p:button>
+                                        <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:tipo_legalizacion:lista:eliminar')}" icon="ui-icon-delete"  title="Borrar" actionListener="#{listaTipoLegalizacionManagedBean.eliminar()}" update=":fForm:growl,dtTipoLegalizacion">
+                                            <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                            <f:param name="id_e" value="#{tipoLegalizacion.id}"/>
+                                        </p:commandButton>
+                                    </p:column>
+                         </p:dataTable> 
+                         <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                             <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                             <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                         </p:confirmDialog>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+      
+    </ui:define>
+
+</ui:composition>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      >
+
+    <h:head>
+        <f:facet name="first">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+            <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"/>
+            <meta name="apple-mobile-web-app-capable" content="yes" />
+        </f:facet>
+        <title>GNV</title>
+        <h:outputScript name="js/nanoscroller.js" library="serenity-layout" />
+        <h:outputScript name="js/layout.js" library="serenity-layout" />
+        <h:outputScript name="js/ripple.js" library="serenity-layout" />
+        <h:outputScript name="js/swipe.js" library="serenity-layout" />
+        <h:outputScript library="serenity-layout" name="js/jquery.blockUI.js"/>
+        <ui:insert name="head"/>
+        <!--<style type="text/css">
+            body .ui-widget-header
+            {
+                background-color: #5A0202;
+            }
+        </style>-->
+    </h:head>
+
+    <h:body>
+        <p:dialog modal="true" closable="false" visible="#{sessionManagedBean.actualizarHash}" position="center" id="dlgHash" header="Reinicio de contraseña" widgetVar="dlg1">
+            <div align="center" >
+                <h:form>
+                    <p:messages id="messages" showDetail="true" closable="true"/>
+                    <p:autoUpdate/>
+                    <div style="padding: 4px;">
+                        <div style=" margin-bottom: .10em;">
+                            <h:outputText  value="Contraseña nueva"/>
+                            <h:inputSecret style="margin-left: 4em;"  value="#{sessionManagedBean.hashNueva}"/>
+                        </div>
+                        <div style=" margin-bottom: .10em;">
+                            <h:outputText value="Confirmar contraseña"/>
+                            <h:inputSecret style="margin-left: 2.5em;"  value="#{sessionManagedBean.hashConfirmacion}"/>
+                        </div>
+                    </div>
+                    <p:commandButton id="btn1" value="Aceptar" actionListener="#{sessionManagedBean.cambiaHash()}" update="@all" oncomplete="guardarPassRequest(xhr, status, args)"/>
+                </h:form>
+            </div>
+        </p:dialog>
+        <div class="layout-wrapper">
+            <ui:include src="./menu.xhtml"/>
+            <div class="layout-main">
+                <p:growl id="hashGrowl" showDetail="true"/>
+                <ui:include src="./topbar.xhtml"/>
+                <div class="layout-breadcrumb"></div>
+                <div class="layout-content">
+                    <ui:insert name="content"/>
+                </div>
+                <ui:include src="./footer.xhtml"/>
+            </div>
+
+        </div>
+
+        <p:ajaxStatus style="width:1px;height:1px;" id="ajaxStatusPanel" onstart="$.blockUI();" onsuccess="$.unblockUI();"/> 
+
+        <h:outputStylesheet name="css/nanoscroller.css" library="serenity-layout" />
+        <h:outputStylesheet name="css/animate.css" library="serenity-layout" />
+        <h:outputStylesheet name="css/ripple.css" library="serenity-layout" />
+        <h:outputStylesheet name="css/layout-lightblue.css" library="serenity-layout" />
+        <h:outputStylesheet name="css/layout-flatiron.css" library="serenity-layout" />
+        <h:outputScript target="head">
+            function guardarPassRequest(xhr, status, args) {
+            if(args.error)
+            {
+              return;
+            }
+
+              PF('dlg1').hide();
+            }
+        </h:outputScript>
+
+    </h:body>
+
+
+</html>

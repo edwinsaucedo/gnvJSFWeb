@@ -1,0 +1,157 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="title">#{nuevoFabricanteManagedBean.titulo}</ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmNuevoFabricante">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>#{nuevoFabricanteManagedBean.titulo}</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:fabricante:nuevo:guardar')}"  icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnGuardar" value="Guardar" actionListener="#{nuevoFabricanteManagedBean.guardar()}"  disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}"  update="growl, frmNuevoFabricante"/>
+                                </p:toolbarGroup>
+
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbNuevo" value="Regresar" outcome="lista" icon="ui-icon-keyboard-return" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+                        <p:fieldset legend="Información Fabricante" style="margin-bottom:1%">
+                            <div class="ui-grid-row">
+                                <div class="ui-panelgrid-cell ui-grid-col-12">
+
+                                    <p:panelGrid id="idPanelEmpresa" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                        <h:outputLabel for="soEmpresa" value="Empresa: "/>
+                                        <p:selectOneMenu disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" id="soEmpresa" value="#{nuevoFabricanteManagedBean.empresa}" converter="#{empresaConverter}" required="true" requiredMessage="Empresa requerida.">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevoFabricanteManagedBean.listaEmpresa}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                                        </p:selectOneMenu>
+
+                                    </p:panelGrid>
+                                    <p:panelGrid id="idPanelGrid" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+
+
+                                        <h:outputLabel for="soTipoDoc" value="Tipo de Documento: "/>
+                                        <p:selectOneMenu id="soTipoDoc" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.tipoDocumentacion}" converter="#{tipoDocumentoConverter}" required="true" requiredMessage="Tipo de documento requerido.">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevoFabricanteManagedBean.listaTipoDoc}" var="td" itemLabel="#{td.nombre}" itemValue="#{td}"/>
+                                        </p:selectOneMenu>
+
+                                        <h:outputLabel for="itNombre" value="Nombre:"/>
+                                        <p:inputText id="itNombre" required="true" value="#{nuevoFabricanteManagedBean.fabricante.nombre}" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}"  requiredMessage="Nombre de fabricante requerido."/>   
+
+
+                                        <h:outputLabel for="itNumeroDoc" value="Numero de documento:"/>
+                                        <p:inputText id="itNumeroDoc" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" required="true" value="#{nuevoFabricanteManagedBean.fabricante.numeroDocumento}" requiredMessage="Numero de documento requerido."/>
+
+                                        <h:outputLabel for="itCodigo" value="Código:"/>
+                                        <p:inputText id="itCodigo" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" required="true" value="#{nuevoFabricanteManagedBean.fabricante.codigo}" requiredMessage="Código requerido."/>
+
+
+
+
+
+                                    </p:panelGrid>
+                                    <p:panelGrid id="idPanelDatosPersonales" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                        <h:outputLabel for="soPais" value="Pais"/>
+                                        <p:selectOneMenu id="soPais" filter="true" filterMatchMode="startsWith" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.pais}" converter="#{paisConverter}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevoFabricanteManagedBean.paisList}" var="p" itemLabel="#{p.nombre}" itemValue="#{p}"/>
+                                            <p:ajax event="change" listener="#{nuevoFabricanteManagedBean.onPaisChange()}" update="frmNuevoFabricante:soEstado"/>
+                                        </p:selectOneMenu> 
+                                        <h:outputLabel for="soEstado" value="Estado"/>
+                                        <p:selectOneMenu id="soEstado" filter="true" filterMatchMode="startsWith" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.estado}" converter="#{estadoConverter}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevoFabricanteManagedBean.estadoList}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                                            <p:ajax event="change" listener="#{nuevoFabricanteManagedBean.onEstadoChange()}" update="frmNuevoFabricante:soCiudad"/>
+                                        </p:selectOneMenu> 
+                                        <h:outputLabel for="soCiudad" value="Ciudad"/>
+                                        <p:selectOneMenu filter="true" filterMatchMode="startsWith" id="soCiudad" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.ciudad}" required ="Ciudad requerida" converter="#{ciudadConverter}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevoFabricanteManagedBean.ciudadList}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>
+                                        </p:selectOneMenu>
+
+                                        <h:outputLabel for="itDireccion" value="Direccion:"/>
+                                        <p:inputText id="itDireccion" required="true" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}"  requiredMessage="Direccion requerida." value="#{nuevoFabricanteManagedBean.fabricante.direccion}"/>
+
+                                        <h:outputLabel for="itTelefono" value="Telefono:"/>
+                                        <p:inputText id="itTelefono" required="true" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}"  requiredMessage="Telefono requerido." value="#{nuevoFabricanteManagedBean.fabricante.telefono}"/>
+
+                                        <h:outputLabel for="itEmail" value="E-Mail:"/>
+                                        <p:inputText id="itEmail" required="true"  disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" requiredMessage="E-mail requerida." value="#{nuevoFabricanteManagedBean.fabricante.email}"/>
+
+                                    </p:panelGrid>
+
+
+                                </div>
+                            </div>
+                        </p:fieldset>
+
+
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+                                <p:fieldset legend="Info Adi.Fabricante" style="margin-bottom:1%">
+                                    <p:panelGrid id="idPanelGridVehiculo" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                        <h:outputLabel for="soTipoValor" value="Tipo de valor para comisión: "/>
+                                        <p:selectOneMenu  id="soTipoValor" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.tipoValorComision}" >
+                                            <f:selectItem itemLabel="Valor fijo" itemValue="#{true}" />
+                                            <f:selectItem itemLabel="Porcentaje" itemValue="#{false}" />
+                                        </p:selectOneMenu> 
+
+                                        <h:outputLabel for="itComision" value="Comisión control de carga"/>
+                                        <p:inputText id="itComision" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}"  value="#{nuevoFabricanteManagedBean.fabricanteInfoA.comisionControlCarga}" onkeyup="fValidaNumerico(this.id)" maxlength="18"/>
+
+                                        <h:outputLabel for="itNumeroAutorizacion" value="Número autorización:"/>
+                                        <p:inputText id="itNumeroAutorizacion" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.fabricanteInfoA.numeroAutorizacion}"  maxlength="50"/>
+
+                                        <p:outputLabel for="dpFechaAut" value="Fecha de autorización:" />
+                                        <p:datePicker id="dpFechaAut" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.fabricanteInfoA.fechaAutorizacion}" showIcon="true" />
+
+                                        <p:outputLabel for="dpFechaVen" value="Fecha de vencimiento:" />
+                                        <p:datePicker id="dpFechaVen" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" value="#{nuevoFabricanteManagedBean.fabricanteInfoA.fechaVencimiento}" showIcon="true" />
+
+                                        <h:outputLabel for="itObservaciones" value="Modelo:"/>
+                                        <p:inputText id="itObservaciones" disabled="#{!nuevoFabricanteManagedBean.fabricanteInfoEnabled}" type="text"  value="#{nuevoFabricanteManagedBean.fabricanteInfoA.observacion}"  maxlength="500"/>
+                                    </p:panelGrid>
+                                </p:fieldset>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </h:form>
+
+
+    </ui:define>
+
+</ui:composition>

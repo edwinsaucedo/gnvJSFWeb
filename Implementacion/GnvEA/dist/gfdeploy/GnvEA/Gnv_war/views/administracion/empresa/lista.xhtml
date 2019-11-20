@@ -1,0 +1,62 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Lista de empresas</ui:define>
+
+    <ui:define name="content">
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Lista de empresas</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbNuevo" value="Nuevo" icon="ui-icon-add" outcome="nuevo" rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:empresa:lista:nuevo')}" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+
+                        <p:dataTable id="dtEmpresa" value="#{listaEmpresaManagedBean.empresaList}" var="empresa" emptyMessage="Sin resultados." rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                            <f:facet name="header">
+                                Empresas
+                            </f:facet>
+
+                            <p:column id="idColNombre" headerText ="Nombre" filterBy="#{empresa.nombre}" sortBy="#{empresa.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{empresa.nombre}"/>
+                            </p:column>
+
+                            <p:column id="idColRfc" headerText ="RFC" filterBy="#{empresa.rfc}" sortBy="#{empresa.rfc}" filterMatchMode="contains">
+                                <h:outputText value="#{empresa.rfc}"/>
+                            </p:column>
+                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                <p:button icon="ui-icon-pencil"  title="Editar" outcome="nuevo" rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:empresa:lista:editar')}">
+                                    <f:param name="id" value="#{empresa.id}"/>
+                                </p:button>
+                                <p:commandButton icon="ui-icon-delete"  title="Borrar" actionListener="#{listaEmpresaManagedBean.eliminar()}" update=":fForm:growl,:fForm:dtEmpresa" rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:empresa:lista:eliminar')}">
+                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                    <f:param name="id_del" value="#{empresa.id}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+

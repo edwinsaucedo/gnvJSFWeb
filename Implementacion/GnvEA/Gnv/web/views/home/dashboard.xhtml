@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Dashboard</ui:define>
+
+    <ui:define name="head">
+        <script type="text/javascript">
+            //<![CDATA[
+            function skinChart() {
+                this.cfg.shadow = false;
+                this.cfg.title = '';
+                this.cfg.seriesColors = ['#FFC107', '#03A9F4'];
+                this.cfg.grid = {
+                    background: '#ffffff',
+                    borderColor: '#ffffff',
+                    gridLineColor: '#EEEEEE',
+                    shadow: false
+                };
+                this.cfg.axesDefaults = {
+                    rendererOptions: {
+                        textColor: '#212121'
+                    }
+                };
+                this.cfg.seriesDefaults = {
+                    shadow: false,
+                    lineWidth: 1,
+                    markerOptions: {
+                        shadow: false,
+                        size: 7,
+                        style: 'circle'
+                    }
+                };
+            }
+            window.onload=onLoad;
+            function onLoad()
+            {
+                var dvConversionValoracionG=document.getElementById('dvConversionValoracionG');
+                var dvRevisionG=document.getElementById('dvRevisionG');
+                if(#{shiroAuthPermManagedBean.isPermitted('dashboard:graficos:valoracion_conversion_mes:ver')})
+                   dvConversionValoracionG.style.display="block";
+                else
+                   dvConversionValoracionG.style.display="none";
+                if(#{shiroAuthPermManagedBean.isPermitted('dashboard:graficos:revision_mes:ver')})
+                   dvRevisionG.style.display="block";
+                else
+                   dvRevisionG.style.display="none";
+            }
+            //]]>  
+        </script>
+        <style type="text/css">
+            .main-content {
+                padding: 0;
+            }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="ui-g dashboard">
+            <div class="ui-g-12 ui-md-3">
+                <div class="overview-box overview-box-2">
+                    <div class="overview-box-header"/> 
+                    <div class=" overview-box-content">
+                        <div class=" overview-box-icon"><i class="material-icons">&#xe869;</i></div>
+                        <div class=" overview-box-title"> Kits Instalados</div>
+                        <div class=" overview-box-count">#{dashBoardManagedBean.kitInstalados}</div>
+                    </div>    
+                   
+                </div>
+            </div>
+            <div class="ui-g-12 ui-md-3"/>
+            <div class="ui-g-12 ui-md-3"/>
+            <div class="ui-g-12 ui-md-3"/>
+            <div id="dvConversionValoracionG" class="ui-g-12 ui-md-6">
+                <div class="card overview">
+                    <div class="overview-content clearfix">
+                        <span class="overview-title">N° Conversiones y Valoraciones por Mes.</span>
+                        <span class="overview-detail">
+                            <p:chart type="bar" model="#{dashBoardManagedBean.cvBarModel}" responsive="true" />         
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+             <div id="dvRevisionG" class="ui-g-12 ui-md-6">
+                <div class="card overview">
+                    <div class="overview-content clearfix">
+                        <span class="overview-title">N° Revisiones por Mes.</span>
+                        <span class="overview-detail">
+                            <p:chart type="line" model="#{dashBoardManagedBean.revisionLineModel}" responsive="true" />         
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </ui:define>
+
+</ui:composition>

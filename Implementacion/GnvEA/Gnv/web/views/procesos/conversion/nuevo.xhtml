@@ -1,0 +1,297 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                >
+    <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+            body .ui-fieldset .ui-fieldset-legend{
+                font-size: 16px;
+
+            } 
+        </style>
+        <script type="text/javascript">
+            function disableChoosing() {
+                PF('fileUpwidget').disableButton(PF('fileUpwidget').chooseButton);
+                PF('fileUpwidget').chooseButton.find('input[type="file"]').attr('disabled', 'disabled');
+            }
+
+            function enableChoosing() {
+                if (!PF('fileUpwidget').files.length) {
+                    PF('fileUpwidget').enableButton(PF('fileUpwidget').chooseButton);
+                    PF('fileUpwidget').chooseButton.find('input[type="file"]').removeAttr('disabled');
+                }
+            }
+        </script>
+    </ui:define>
+    <ui:define name="title">#{nuevaConversionManagedBean.titulo}</ui:define>
+    <ui:define name="content">
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <div class="cardScreenTitle">
+                    <h1>#{nuevaConversionManagedBean.titulo}</h1>
+                </div>
+                <div class="card">
+                    <h:form id="frmNuevoConversion">
+                        <p:growl id="growl" showDetail="true"/>
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:nuevo:guardar')}" icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnGuardar" value="Guardar" update="frmNuevoConversion,frmConversionEquipo,frmDocumentosConversionEquipo" actionListener="#{nuevaConversionManagedBean.guardar()}" disabled="#{!nuevaConversionManagedBean.infoConversionEditable||!nuevaConversionManagedBean.editable}"/>
+                                </p:toolbarGroup>
+
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbNuevo" value="Regresar" icon="ui-icon-keyboard-return" outcome="lista" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+                                <p:fieldset legend="Inf.Coversion" style="margin-bottom: 1%;">
+                                    <p:panelGrid id="idPanelGridVehiculo" columns="7" layout="grid"  style="margin-bottom:1%;">
+                                        <p:outputLabel value="Placa vehiculo:" for="itPlaca"/>
+                                        <p:inputText   id="itPlaca" value="#{nuevaConversionManagedBean.vehiculoForm.placa}" disabled="#{!nuevaConversionManagedBean.editable||!nuevaConversionManagedBean.infoVehEditable}">
+                                            <p:ajax  event="change" listener="#{nuevaConversionManagedBean.onItPlacaChange()}" update="frmNuevoConversion:idPanelGridVehiculo,frmNuevoConversion:growl"/>
+                                        </p:inputText>
+                                        <p:commandButton process="@this"  class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                                         id="cbtnBuscarVehiculo" icon="ui-icon-search" title="Buscar vehiculo" oncomplete="PF('dlgConsultarVehiculo').show()"
+                                                         disabled="#{!nuevaConversionManagedBean.editable||!nuevaConversionManagedBean.infoVehEditable}"
+                                                         />
+                                        <p:outputLabel value="Vehiculo:" for="itMarca" rendered="#{nuevaConversionManagedBean.infoVehVisible}"/>
+                                        <p:outputLabel id="itMarca"   value="#{nuevaConversionManagedBean.vehiculoForm.marca.nombre}" rendered="#{nuevaConversionManagedBean.infoVehVisible}"/>
+                                        <p:outputLabel value="Modelo:" rendered="#{nuevaConversionManagedBean.infoVehVisible}"/>
+                                        <p:outputLabel value="#{nuevaConversionManagedBean.vehiculoForm.modelo}" rendered="#{nuevaConversionManagedBean.infoVehVisible}"/>
+                                    </p:panelGrid>
+
+                                    <p:panelGrid id="idPanelGridConversion" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo,ladoDerecho,ladoIzquierdo,ladoDerecho">
+                                        <p:outputLabel value="Taller:" for="smTaller"/>
+                                        <p:selectOneMenu id="smTaller" value="#{nuevaConversionManagedBean.taller}" converter="#{tallerConverter}" required="true" requiredMessage="Taller requerido." disabled="#{!nuevaConversionManagedBean.infoConversionEditable||!nuevaConversionManagedBean.editable}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevaConversionManagedBean.tallerList}" var="t" itemLabel="#{t.nombre}" itemValue="#{t}"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Tipo conversión:" for="smTipoConversion"/>
+                                        <p:selectOneMenu id="smTipoConversion" value="#{nuevaConversionManagedBean.tipoConversion}" converter="#{tipoConversionConverter}" required="true" requiredMessage="Tipo Conversion requerido." disabled="#{!nuevaConversionManagedBean.infoConversionEditable||!nuevaConversionManagedBean.editable}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevaConversionManagedBean.tipoConversionList}" var="tc" itemLabel="#{tc.nombre}" itemValue="#{tc}"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel value="Tipo convenio:" for="smTipoConvenio"/>
+                                        <p:selectOneMenu id="smTipoConvenio" value="#{nuevaConversionManagedBean.tipoConvenio}" converter="#{tipoConvenioConverter}" required="true" requiredMessage="Tipo convenio requerido." disabled="#{!nuevaConversionManagedBean.infoConversionEditable||!nuevaConversionManagedBean.editable}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevaConversionManagedBean.tipoConvenioList}" var="tcv" itemLabel="#{tcv.nombre}" itemValue="#{tcv}"/>
+                                        </p:selectOneMenu>
+
+                                        <p:outputLabel value="Observaciones:" for="itaObservaciones"/>
+                                        <p:inputTextarea id="itaObservaciones" value="#{nuevaConversionManagedBean.conversion.observacion}" required="true" requiredMessage="Observaciones requeridas." disabled="#{!nuevaConversionManagedBean.infoConversionEditable||!nuevaConversionManagedBean.editable}"/>
+                                        <p:outputLabel value="Estatus:" for="soEstatus"/>
+                                        <p:selectOneMenu id="soEstatus" value="#{nuevaConversionManagedBean.estatus}" converter="#{estatusConverter}" required="true" requiredMessage="Estatus requerido." disabled="#{!nuevaConversionManagedBean.infoConversionEditable||!nuevaConversionManagedBean.editable}">
+                                            <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                            <f:selectItems value="#{nuevaConversionManagedBean.estatusList}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                                        </p:selectOneMenu>
+                                        <p:outputLabel for="cFechaConversion" value="Fecha conversion:" />
+                                        <p:calendar id="cFechaConversion" value="#{nuevaConversionManagedBean.conversion.fechaConversion}" showOn="button" required="true" requiredMessage="Fecha conversion requerida." disabled="#{!nuevaConversionManagedBean.infoConversionEditable||!nuevaConversionManagedBean.editable}"/>
+
+                                    </p:panelGrid>
+                                </p:fieldset>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+                <div class="card">
+                    <h:form id="frmConversionEquipo">
+                        <p:growl id="growl1" showDetail="true"/>
+                        <p:tabView id="tvConversionEquipo">
+                            <p:tab title="Kit">
+                                <p:panelGrid id="idPanelGridKit" columns="3" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo">
+                                    <p:outputLabel value="Serial:" for="itSerialKit"/>
+                                    <p:inputText   id="itSerialKit" value="#{nuevaConversionManagedBean.kit.serial}"  disabled="#{!nuevaConversionManagedBean.editable||!nuevaConversionManagedBean.kitEditable}" required="true" requiredMessage="Kit requerido."/>
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:nuevo:agregar:kitCilindro')}" process="@this idPanelGridKit" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                                     id="cbtnAgregarKit" icon="ui-icon-add" title="Agregar kit" 
+                                                     disabled="#{!nuevaConversionManagedBean.editable||!nuevaConversionManagedBean.kitEditable}" actionListener="#{nuevaConversionManagedBean.guardarKit()}" update="frmConversionEquipo:growl1,frmConversionEquipo:tvConversionEquipo:idPanelGridKit,frmConversionEquipo:tvConversionEquipo:dtKit,frmConversionEquipo:tvConversionEquipo:dtDocumuntosEquipo"
+                                                     />
+                                </p:panelGrid>
+                                <div class="ui-grid-row" style="margin-top:3%;">
+                                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                                        <p:dataTable id="dtKit" value="#{nuevaConversionManagedBean.kitConversionList}" reflow="true" paginator="true" var="kit" emptyMessage="Sin resultados." rows="5" 
+                                                     scrollable="true" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center "
+                                                     >
+                                            <f:facet name="header">
+                                                Kit
+                                            </f:facet>
+                                            <p:column id="idSerieKit" headerText="Serie">
+                                                <h:outputText value="#{kit.serial}" />
+                                            </p:column>
+                                            <p:column id="idColMarcaKit" headerText="Marca">
+                                                <h:outputText value="#{kit.marca.nombre}" />
+                                            </p:column>
+                                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;" rendered="#{nuevaConversionManagedBean.editable}">
+                                                <p:commandButton  process="@this dtKit" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevaConversionManagedBean.deleteKitConversion()}" update="frmConversionEquipo:growl1,frmConversionEquipo:tvConversionEquipo:idPanelGridKit,frmConversionEquipo:tvConversionEquipo:dtKit,frmConversionEquipo:tvConversionEquipo:dtDocumuntosEquipo">
+                                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                                    <f:param name="id_e" value="#{kit.id}"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+
+                                    </div>
+                                </div>
+
+                            </p:tab>
+                            <p:tab title="Cilindro">
+                                <p:panelGrid id="idPanelGridCilindro" columns="3" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo">
+                                    <p:outputLabel value="Serial:" for="itSerialCilindro"/>
+                                    <p:inputText   id="itSerialCilindro" value="#{nuevaConversionManagedBean.cilindro.serial}"  disabled="#{!nuevaConversionManagedBean.editable||!nuevaConversionManagedBean.cilindroEditable}" required="true" requiredMessage="Cilindro requerido."/>
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:nuevo:agregar:kitCilindro')}" process="@this idPanelGridCilindro" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" 
+                                                     id="cbtnAgregarCilindro" icon="ui-icon-add" title="Agregar cilindro" 
+                                                     disabled="#{!nuevaConversionManagedBean.editable||!nuevaConversionManagedBean.cilindroEditable}" actionListener="#{nuevaConversionManagedBean.guardarCilindro()}" update="frmConversionEquipo:growl1,frmConversionEquipo:tvConversionEquipo:idPanelGridCilindro,frmConversionEquipo:tvConversionEquipo:dtCilindro,frmConversionEquipo:tvConversionEquipo:dtDocumuntosEquipo"
+                                                     />
+                                </p:panelGrid>
+                                <div class="ui-grid-row" style="margin-top:3%;">
+                                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                                        <p:dataTable id="dtCilindro" value="#{nuevaConversionManagedBean.cilindroConversionList}" reflow="true" paginator="true" var="cilindro" emptyMessage="Sin resultados." rows="5" 
+                                                     scrollable="true" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center "
+                                                     >
+                                            <f:facet name="header">
+                                                Cilindro
+                                            </f:facet>
+                                            <p:column id="idSerieCilindro" headerText="Serie">
+                                                <h:outputText value="#{cilindro.serial}" />
+                                            </p:column>
+                                            <p:column id="idColMarcaCilindro" headerText="Marca">
+                                                <h:outputText value="#{cilindro.marca.nombre}" />
+                                            </p:column>
+                                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;" rendered="#{nuevaConversionManagedBean.editable}">
+                                                <p:commandButton  process="@this dtCilindro" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevaConversionManagedBean.deleteCilindroConversion()}" update="frmConversionEquipo:growl1,frmConversionEquipo:tvConversionEquipo:idPanelGridCilindro,frmConversionEquipo:tvConversionEquipo:dtCilindro,frmConversionEquipo:tvConversionEquipo:dtDocumuntosEquipo">
+                                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                                    <f:param name="id_e" value="#{cilindro.id}"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+
+                                    </div>
+                                </div>
+                            </p:tab>
+                            <p:tab title="Documentos">
+                                <div class="ui-grid-row" style="margin-top:3%;">
+                                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                                        <p:dataTable id="dtDocumuntosEquipo" value="#{nuevaConversionManagedBean.documentoEquipoList}" reflow="true" paginator="true" var="documento" emptyMessage="Sin resultados." rows="5" 
+                                                     scrollable="true" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center "
+                                                     >
+                                            <f:facet name="header">
+                                                Doumentos Legalización
+                                            </f:facet>
+                                            <p:column id="idColDocumento" headerText="Documento">
+                                                <h:outputText value="#{documento.nombre}" />
+                                            </p:column>
+                                            <p:column id="idColExtension" headerText="Extension">
+                                                <h:outputText value="#{documento.tipoArchivo.nombre}" />
+                                            </p:column>
+                                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:nuevo:descargar:documentos')}" icon="ui-icon-file-download" title="descargar"  actionListener="#{nuevaConversionManagedBean.descargarDocumentos(documento.id)}" ajax="false">
+                                                    <p:fileDownload value="#{nuevaConversionManagedBean.streamedContent}" contentDisposition="inline"/>
+                                                </p:commandButton>
+                                            </p:column>
+                                        </p:dataTable>
+                                    </div>
+                                </div>
+                            </p:tab>
+                        </p:tabView>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </h:form>
+                </div>
+                <div class="card">
+                    <h:form id="frmDocumentosConversionEquipo">
+                        <p:growl id="growl2" showDetail="true"/>
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+                                <p:fieldset legend="Documentos Conversion">
+                                    <p:panelGrid id="idPanelGridDocConversion" layout="grid" columns="2"  style="margin-bottom:1%" >
+                                        <h:outputLabel for="isPublico" value="Publico: "/>
+                                        <p:inputSwitch id="isPublico" value="#{nuevaConversionManagedBean.documento.publico}" disabled="#{!nuevaConversionManagedBean.editable}">
+                                            <p:ajax/>
+                                        </p:inputSwitch>
+                                        <h:outputLabel for="fuDocumentos" value="Seleccionar documento: "/>
+                                        <p:fileUpload rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:nuevo:cargar:documentos')}"  label="Examinar" disabled="#{!nuevaConversionManagedBean.editable}" id="fuDocumentos" fileUploadListener="#{nuevaConversionManagedBean.guardarDocumento}" widgetVar="fileUpwidget" sizeLimit="5000000"  fileLimit="100" multiple="false" auto="true" dragDropSupport="false" onstart="disableChoosing()" oncomplete="enableChoosing()" skinSimple="true" update="frmDocumentosConversionEquipo:growl2,frmDocumentosConversionEquipo:dtDocumuntosConversionEquipo,frmDocumentosConversionEquipo:isPublico"/>
+                                    </p:panelGrid>
+                                    <p:dataTable id="dtDocumuntosConversionEquipo" value="#{nuevaConversionManagedBean.documentoList}" reflow="true" paginator="true" var="documento" emptyMessage="Sin resultados." rows="5" 
+                                                 scrollable="true" 
+                                                 >
+                                        <f:facet name="header">
+                                            Doumentos Conversion
+                                        </f:facet>
+                                        <p:column id="idColDocumento" headerText="Documento">
+                                            <h:outputText value="#{documento.nombre}" />
+                                        </p:column>
+                                        <p:column id="idColExtension" headerText="Extension">
+                                            <h:outputText value="#{documento.tipoArchivo.nombre}" />
+                                        </p:column>
+                                        <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                            <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:lista:eliminar')}" icon="ui-icon-file-download" title="descargar"  actionListener="#{nuevaConversionManagedBean.descargarDocumentos(documento.id)}" ajax="false">
+                                                <p:fileDownload value="#{nuevaConversionManagedBean.streamedContent}" contentDisposition="inline"/>
+                                            </p:commandButton>
+                                            <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:conversion:nuevo:descargar:documentos')}" icon="ui-icon-delete"  title="Borrar" actionListener="#{nuevaConversionManagedBean.eliminarDocumento()}" disabled="#{!nuevaConversionManagedBean.editable}"  update="frmDocumentosConversionEquipo:growl2,frmDocumentosConversionEquipo:dtDocumuntosConversionEquipo">
+                                                <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el documento?" icon="ui-icon-alert" />                                            
+                                                <f:param name="id_e" value="#{documento.id}"/>
+                                            </p:commandButton>
+                                        </p:column>
+                                    </p:dataTable>
+                                </p:fieldset>
+                            </div>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+        <p:dialog widgetVar="dlgConsultarVehiculo" modal="true" visible="#{nuevaConversionManagedBean.infoVehEditable}" responsive="true" width="800" height="400" draggable="false" position="center center">
+            <f:facet name="header">
+                <h:outputText id="dlgConsultarVehiculoHeader" value="Buscar Vehiculo"/>
+            </f:facet>
+            <h:form id="frmConsultarVehiculo">
+                <h:panelGrid id="pgVehiculo" columns="2" columnClasses="ladoIzquierdo, ladoDerecho"> 
+                    <p:outputLabel value="Placa vehiculo:" for="itPlaca"/>
+                    <p:inputText id="itPlaca" value="#{nuevaConversionManagedBean.vehiculoModal.placa}" onkeyup="onItPlacaKeyUp()"/>
+                </h:panelGrid>
+                <p:remoteCommand name="onItPlacaKeyUp" update="frmConsultarVehiculo:dtVehiculos" actionListener="#{nuevaConversionManagedBean.onItPlacaKeyUp()}"/>
+                <div class="ui-grid-row" style="margin-top:3%;">
+                    <div class="ui-panelgrid-cell ui-grid-col-12">
+                        <p:dataTable id="dtVehiculos" value="#{nuevaConversionManagedBean.valoracionList}" reflow="true" paginator="true" var="valoracion" emptyMessage="Sin resultados." rows="5" 
+                                     selectionMode="single"  rowKey="#{valoracion.id}" scrollable="true"
+                                     >
+                            <p:ajax event="rowDblselect" listener="#{nuevaConversionManagedBean.onDtVehiculosRowDobleClick}" oncomplete="PF('dlgConsultarVehiculo').hide()" global="false"/>
+                            <f:facet name="header">
+                                Vehiculos
+                            </f:facet>
+                            <p:column id="idColId" headerText="ID" visible="false">
+                                <h:outputText value="#{valoracion.id}" />
+                            </p:column>
+                            <p:column id="idColPlaca" headerText="Placa">
+                                <h:outputText value="#{valoracion.vehiculo.placa}" />
+                            </p:column>
+                            <p:column id="idColModelo" headerText="Modelo">
+                                <h:outputText value="#{valoracion.vehiculo.modelo}" />
+                            </p:column>
+                            <p:column id="idColFecha" headerText="Fecha Valoracion">
+                                <h:outputText value="#{valoracion.fechaString}" />
+                            </p:column>
+                        </p:dataTable>
+
+                    </div>
+                </div>
+            </h:form>
+        </p:dialog>
+
+    </ui:define>
+
+</ui:composition>

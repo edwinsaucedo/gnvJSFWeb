@@ -1,0 +1,70 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    
+        <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+/*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+            
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+    </ui:define>
+    
+     <ui:define name="title">#{nuevoFinancieraManagedBean.titulo}</ui:define>
+     
+       <ui:define name="content">
+        <h:form>
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>#{nuevaFinancieraManagedBean.titulo}</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:financiera:nuevo:guardar')}" icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" id="cbtnGuardar" value="Guardar" actionListener="#{nuevaFinancieraManagedBean.guardar()}" update="growl, itNombre, itRfc"/>
+                                </p:toolbarGroup>
+                                
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbNuevo" value="Regresar" outcome="lista" icon="ui-icon-keyboard-return" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+                        
+                        
+                                    <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12">
+                                <p:panelGrid id="idPanelGrid" columns="6" layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo">
+                                    <h:outputLabel for="itNombre" value="Nombre:"/>
+                                    <p:inputText id="itNombre" required="true" value="#{nuevaFinancieraManagedBean.financiera.nombre}" requiredMessage="Nombre de financiera requerido."/>
+                                        
+                                    <h:outputLabel for="itRfc" value="Rfc:"/>
+                                    <p:inputText id="itRfc" required="true" value="#{nuevaFinancieraManagedBean.financiera.rfc}" requiredMessage="RFC requerido." />
+                                    
+                                    <h:outputLabel for="soCompania" value="Compañía:"/>
+                                    <p:selectOneMenu id="soCompania" value="#{nuevaFinancieraManagedBean.compania}" converter="#{companiaConverter}" required="true" requiredMessage="Compañía requerida.">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{nuevaFinancieraManagedBean.companiaList}" var="c" itemLabel="#{c.nombre}" itemValue="#{c}"/>
+                                    </p:selectOneMenu>
+                                </p:panelGrid>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+    
+    </ui:composition>

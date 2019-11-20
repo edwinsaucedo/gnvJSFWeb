@@ -1,0 +1,75 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Lista de Cotizaciones</ui:define>
+
+    <ui:define name="content">
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Lista de Cotizaciones</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button  id="cmbNuevo" value="Nuevo" icon="ui-icon-add"  rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:cotizacion:lista:nuevo')}" outcome="nuevo" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+
+
+                        <p:dataTable id="dtCotizacion" value="#{listaCotizacionManagedBean.cotizacionesList}" var="cotizacion" emptyMessage="Sin resultados."  rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown} {Exporters}"
+                                     rowsPerPageTemplate="5,10,15">
+                            <f:facet name="header">
+                                Cotización
+                            </f:facet>
+
+                 
+
+                            <p:column id="idColNombre" headerText="Nombre" filterBy="#{cotizacion.nombre}" sortBy="#{cotizacion.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{cotizacion.nombre}"/>
+                            </p:column>
+
+                            <p:column id="idColFinanciera" headerText="Financiera" filterBy="#{cotizacion.financiera.nombre}" sortBy="#{cotizacion.financiera.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{cotizacion.financiera.nombre}"/>
+                            </p:column>
+
+                            <p:column id="idColFecha" headerText="Fecha de cotización" filterBy="#{cotizacion.dateString}" sortBy="#{cotizacion.dateString}" filterMatchMode="contains">
+                                <h:outputText value="#{cotizacion.dateString}"/>
+                            </p:column>
+
+
+                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                <p:button   rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:cotizacion:lista:editar')}" icon="ui-icon-check"  title="Seleccionar" outcome="nuevo">
+                                    <f:param name="id" value="#{cotizacion.id}"/>
+                                </p:button>
+                                <p:commandButton  rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:cotizacion:lista:eliminar')}" icon="ui-icon-delete"  title="Borrar" actionListener="#{listaCotizacionManagedBean.eliminar()}" update="fForm:growl,dtCotizacion">
+                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                    <f:param name="id_e" value="#{cotizacion.id}"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>

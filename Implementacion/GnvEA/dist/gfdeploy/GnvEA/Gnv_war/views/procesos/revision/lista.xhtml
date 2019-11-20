@@ -1,0 +1,115 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">Lista de Revisiones</ui:define>
+
+    <ui:define name="content">
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Lista de Revisiones</h1>
+                    </div>
+                    <div class="card">
+
+                       
+                        <p:tabView>
+
+                            <p:tab title="Pendientes por revisión">
+                                <p:dataTable id="dtPendienteRevision" value="#{listaRevisionManagedBean.listaConversion}" var="conversion" emptyMessage="Sin resultados."  rows="10"
+                                             paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15">
+                                    <f:facet name="header">
+                                        Pendientes de revisión
+                                    </f:facet>
+                                    <p:column id="idColTaller" headerText="Taller conversión" filterBy="#{conversion.taller.nombre}" sortBy="#{conversion.taller.nombre}" filterMatchMode="contains">
+                                        <h:outputText value="#{conversion.taller.nombre}"/>
+                                    </p:column>
+                                    <p:column id="idColPlaca" headerText="Placa" filterBy="#{conversion.valoracion.vehiculo.placa}" sortBy="#{conversion.valoracion.vehiculo.placa}" filterMatchMode="contains">
+                                        <h:outputText value="#{conversion.valoracion.vehiculo.placa}"/>
+                                    </p:column>
+
+                                  <!--  <p:column id="idColIdRom" headerText="ID ROM" filterBy="#{valoracion.fechaString}" sortBy="#{valoracion.fechaString}" filterMatchMode="contains">
+                                        <h:outputText value="#{valoracion.fechaString}"/>
+                                    </p:column>
+                                    -->
+
+                                    <p:column id="idColFechaRevision" headerText="Fecha próxima revisión" filterBy="#{conversion.valoracion.vehiculo.fechaProxRev}" sortBy="#{conversion.valoracion.vehiculo.fechaProxRev}" filterMatchMode="contains">
+                                        <h:outputText value="#{conversion.valoracion.vehiculo.fechafechaProxString}"/>
+                                    </p:column>
+
+
+
+
+
+                                    <p:column id="idAccionesRevision" headerText="Seleccionar" style="text-align: center;">
+                                        <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:revision:lista:editar')}" icon="ui-icon-check"  title="Editar" outcome="nuevo">
+                                            <f:param name="id" value="#{conversion.id}"/>
+                                        </p:button>
+                                    </p:column>
+                                </p:dataTable>
+
+                                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                                </p:confirmDialog>
+
+                            </p:tab>
+                            <p:tab title="Revisiones">
+                                <p:dataTable id="dtRevision" value="#{listaRevisionManagedBean.listaRevision}" var="revision" emptyMessage="Sin resultados."  rows="10"
+                                             paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                             rowsPerPageTemplate="5,10,15">
+                                    <f:facet name="header">
+                                        Revisiones
+                                    </f:facet>
+                                    <p:column id="idColTaller" headerText="Taller" filterBy="#{revision.taller.nombre}" sortBy="#{revision.taller.nombre}" filterMatchMode="contains">
+                                        <h:outputText value="#{revision.taller.nombre}"/>
+                                    </p:column>
+                                    <p:column id="idColPlaca" headerText="Vehiculo" filterBy="#{revision.vehiculo.placa}" sortBy="#{revision.vehiculo.placa}" filterMatchMode="contains">
+                                        <h:outputText value="#{revision.vehiculo.placa}"/>
+                                    </p:column>
+
+                                    <p:column id="idColFechaCreacion" headerText="Fecha revisión" filterBy="#{revision.fechaRevString}" sortBy="#{revision.fechaRevString}" filterMatchMode="contains">
+                                        <h:outputText value="#{revision.fechaRevString}"/>
+                                    </p:column>
+
+
+                                    <p:column id="idColFechaRevision" headerText="Fecha próxima revisión" filterBy="#{revision.fechaProxString}" sortBy="#{revision.fechaProxString}" filterMatchMode="contains">
+                                        <h:outputText value="#{revision.fechaProxString}"/>
+                                    </p:column>
+
+
+
+
+
+                                    <p:column id="idAccionesR" headerText="Seleccionar" style="text-align: center;">
+                                        <p:button rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:revision:lista:editar')}" icon="ui-icon-check"  title="Editar" outcome="nuevo">
+                                            <f:param name="idR" value="#{revision.id}"/>
+                                        </p:button>
+
+                                        <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:revision:lista:eliminar')}" icon="ui-icon-delete" actionListener="#{listaRevisionManagedBean.eliminar()}"  title="Eliminar" update="dtRevision" >
+                                            <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />  
+                                            <f:param name="id_e" value="#{revision.id}"/>
+                                        </p:commandButton>
+
+
+                                    </p:column>
+                                </p:dataTable>
+
+                            </p:tab>
+                        </p:tabView>
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+

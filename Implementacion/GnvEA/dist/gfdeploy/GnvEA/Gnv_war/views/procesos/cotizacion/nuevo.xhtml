@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+        <script type="text/javascript">
+
+            function fValidaNumerico(pcampo)
+            {
+                var campo = document.getElementById(pcampo);
+                if (isNaN(campo.value))
+                {
+                    setClassError(pcampo);
+                    return false;
+                } else
+                {
+                    setClassNormal(pcampo);
+
+                }
+                return true;
+            }
+
+
+        </script>
+        <script>
+            function disableChoosing() {
+                PF('fileUpwidget').disableButton(PF('fileUpwidget').chooseButton);
+                PF('fileUpwidget').chooseButton.find('input[type="file"]').attr('disabled', 'disabled');
+            }
+
+            function enableChoosing() {
+                if (!PF('fileUpwidget').files.length) {
+                    PF('fileUpwidget').enableButton(PF('fileUpwidget').chooseButton);
+                    PF('fileUpwidget').chooseButton.find('input[type="file"]').removeAttr('disabled');
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">Cotizar Crédito</ui:define>
+
+    <ui:define name="content">
+
+        <h:form id="frmNuevo">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Cotizar Crédito</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroupLeft" align="right">
+                                    <p:commandButton disabled="#{nuevaCotizacionManagedBean.infoDisabled}"  rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:cotizacion:nuevo:guardar')}" icon="ui-icon-save" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-icon-left" actionListener="#{nuevaCotizacionManagedBean.guardar()}"  update="growl, frmCotizar,frmNuevo" id="cbtnGuardar" value="Guardar" />
+                                </p:toolbarGroup>
+
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbRegresar" value="Regresar" outcome="lista"  icon="ui-icon-keyboard-return" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12" style="margin-top:1%;">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+
+        <h:form id="frmCotizar">
+            <p:growl id="growl" showDetail="true"/>
+            <div id="divui" class="ui-g ui-fluid">
+
+                <div class="ui-g-12">
+
+                    <div class="card">
+                        <p:fieldset legend="Calcular cotización" style="margin-bottom:1%">
+                            <p:panelGrid id="idPanelGridC" columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                <h:outputLabel for="soFinanciera" value="Financiera:" />
+                                <p:selectOneMenu disabled="#{nuevaCotizacionManagedBean.infoDisabled}" id="soFinanciera" value="#{nuevaCotizacionManagedBean.financiera}"  required="true" requiredMessage="Debe ingresar una financiera" converter="#{financieraConverter}">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevaCotizacionManagedBean.financieraList}" var="f" itemLabel="#{f.nombre}" itemValue="#{f}"/>
+                                </p:selectOneMenu>
+
+                                <p:outputLabel for="dpFechaCot" value="Fecha de cotización:" />
+                                <p:calendar   readonly="#{nuevaCotizacionManagedBean.infoDisabled}"  id="dpFechaCot" showOn="button" pattern="dd/MM/yyyy" value="#{nuevaCotizacionManagedBean.fechaCotizacion}" required="true"  requiredMessage="Fecha requerido." />
+
+                                <h:outputLabel for="itNombre" value="Nombre:"/>
+                                <p:inputText readonly="#{nuevaCotizacionManagedBean.infoDisabled}" required="true" requiredMessage="Debe ingresar un nombre." onclick="return false;" id="itNombre"  value="#{nuevaCotizacionManagedBean.nombre}"/>
+
+                                <h:outputLabel for="itMontoSolicitar" value="Monto solicitado:"/>
+                                <p:inputText readonly="#{nuevaCotizacionManagedBean.infoDisabled}"  onclick="return false;" id="itMontoSolicitar" rendered="true" requiredMessage="Debe ingresar monto solicitado."   value="#{nuevaCotizacionManagedBean.montoSolicitar}">
+                                    <p:ajax event="change" listener="#{nuevaCotizacionManagedBean.calculoMontoFinanciar()}" update="frmCotizar:itMontoCredito"/>
+                                </p:inputText>
+
+                                <h:outputLabel for="itAnticipo" value="Anticipo:"/>
+                                <p:inputText readonly="#{nuevaCotizacionManagedBean.infoDisabled}"  onclick="return false;" id="itAnticipo"  required="true" requiredMessage="Debe ingresar anticipo."  value="#{nuevaCotizacionManagedBean.anticipo}">
+                                    <p:ajax event="change" listener="#{nuevaCotizacionManagedBean.calculoMontoFinanciar()}" update="frmCotizar:itMontoCredito"/>
+                                </p:inputText>
+
+                                <h:outputLabel for="itMontoCredito" value="Monto de crédito:"/>
+                                <p:inputText readonly="true" onclick="return false;" id="itMontoCredito" maxlength="10"  value="#{nuevaCotizacionManagedBean.montoCredito}"/>
+
+                                <h:outputLabel for="itTasaInteres" value="Tasa de interés:"/>
+                                <p:inputNumber readonly="#{nuevaCotizacionManagedBean.infoDisabled}" required="true" requiredMessage="Debe ingresas tasa de interés."   onclick="return false;" id="itTasaInteres" symbol="%" symbolPosition="s" value="#{nuevaCotizacionManagedBean.tasaInteres}"/>
+
+                                <h:outputLabel for="itPlazo" value="Plazo(meses):"/>
+                                <p:inputNumber readonly="#{nuevaCotizacionManagedBean.infoDisabled}" decimalPlaces="0" required="true" requiredMessage="Debe ingresar plazo"    onclick="return false;" id="itPlazo" maxlength="10" value="#{nuevaCotizacionManagedBean.plazo}"/>
+
+                                <h:outputLabel for="itIva" value="Iva:"/>
+                                <p:inputNumber readonly="#{nuevaCotizacionManagedBean.infoDisabled}"    onclick="return false;" symbol="%" symbolPosition="s" id="itIva"  required="true" requiredMessage="Debe ingresar el porcentaje de iva" maxlength="10" value="#{nuevaCotizacionManagedBean.iva}"/>
+
+
+                                <h:outputLabel for="itMontoIntereses" value="Intereses:"/>
+                                <h:outputLabel   id="itMontoIntereses" value="#{nuevaCotizacionManagedBean.montoInteresTotal}"/>
+
+                                <h:outputLabel for="itMontoTotal" value="Total a pagar:"/>
+                                <h:outputLabel  id="itMontoTotal" value="#{nuevaCotizacionManagedBean.montoPagoTotal}"/>
+
+
+                                <h:panelGrid columns="2" style="border: none; outline: none">
+                                    <p:commandButton disabled="#{nuevaCotizacionManagedBean.infoDisabled}" icon="ui-icon-check"  style="width:150%" actionListener="#{nuevaCotizacionManagedBean.calcularCotizacion()}" id="cbtnGuardar" value="Generar cotización"  update="frmCotizar,dtCotizacion,growl"/>
+
+                                </h:panelGrid>
+                            </p:panelGrid>
+
+                            <p:dataTable id="dtCotizacion" var="cot" value="#{nuevaCotizacionManagedBean.detalleList}"    paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {Exporters}"
+                                         paginator="true" rows="10" style="margin-bottom:20px; margin-left: 10px; margin-right: 10px; margin-top: 10px">
+                                <f:facet name="{Exporters}">
+                                    <div style="float:right;padding-top: 5px;">
+                                        <h:commandLink>
+                                            <p:graphicImage  width="24"/>
+                                            <p:dataExporter type="xls" target="dtCotizacion" fileName="cars" />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage  width="24"/>
+                                            <p:dataExporter type="pdf" target="dtCotizacion" fileName="cars"/>
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage  width="24"/>
+                                            <p:dataExporter type="csv" target="dtCotizacion" fileName="cars" />
+                                        </h:commandLink>
+
+                                        <h:commandLink>
+                                            <p:graphicImage  width="24"/>
+                                            <p:dataExporter type="xml" target="dtCotizacion" fileName="cars" />
+                                        </h:commandLink>
+                                    </div>
+                                </f:facet>
+
+                                <p:column headerText="Periodo">
+                                    <h:outputText value="#{cot.numeroPlazo}" />
+                                </p:column>
+
+                                <p:column headerText="Capital">
+                                    <h:outputText value="#{cot.capital}" />
+                                </p:column>
+
+                                <p:column headerText="Interés">
+                                    <h:outputText value="#{cot.intereses}" />
+                                </p:column>
+
+                                <p:column headerText="IVA">
+                                    <h:outputText value="#{cot.iva}" />
+                                </p:column>
+
+                                <p:column headerText="Pago">
+                                    <h:outputText value="#{cot.pagoTotal}" />
+                                </p:column>
+                            </p:dataTable>
+                        </p:fieldset>
+
+
+                    </div>
+                </div>
+            </div>
+        </h:form>
+    </ui:define>
+</ui:composition>

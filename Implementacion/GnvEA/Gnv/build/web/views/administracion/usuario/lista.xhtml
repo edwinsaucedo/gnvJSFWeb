@@ -1,0 +1,83 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+    <ui:define name="title">Lista de usuarios</ui:define>
+
+    <ui:define name="content">
+        <h:form id="fForm">
+            <p:growl id="growl" showDetail="true"/>
+            <div class="ui-g ui-fluid">
+                <div class="ui-g-12">
+                    <div class="cardScreenTitle">
+                        <h1>Lista de usuarios</h1>
+                    </div>
+                    <div class="card">
+                        <div class="ui-grid-row" style="margin-bottom: 10px;">
+                            <p:toolbar id="idToolBar">
+                                <p:toolbarGroup id="idToolBarGroup" align="left">
+                                    <p:button id="cmbNuevo" value="Nuevo" icon="ui-icon-add" outcome="nuevo"/>
+                                </p:toolbarGroup>
+                            </p:toolbar>
+                        </div>
+
+                        <div class="ui-grid-row">
+                            <div class="ui-panelgrid-cell ui-grid-col-12">
+                                <p:panelGrid id="idPanelGrid" style="margin-bottom: 1%;" columns="4" layout="grid" columnClasses=" ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+                                    <h:outputLabel for="soEstatus" value="Estatus"/>
+                                    <p:selectOneMenu id="soEstatus" value="#{listaUsuarioManagedBean.estatus}" converter="#{estatusConverter}">
+                                        <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                        <f:selectItems value="#{listaUsuarioManagedBean.estatusList}" var="e" itemLabel="#{e.nombre}" itemValue="#{e}"/>
+                                        <p:ajax event="change" listener="#{listaUsuarioManagedBean.estatusOnChange()}" update="fForm:dtUsuario"/>
+                                    </p:selectOneMenu> 
+                                </p:panelGrid>
+                            </div>
+                        </div>
+
+                        <p:dataTable id="dtUsuario" value="#{listaUsuarioManagedBean.usuarioList}" var="usuario" emptyMessage="Sin resultados." rows="10"
+                                     paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                     rowsPerPageTemplate="5,10,15">
+                            <f:facet name="header">
+                                Usuarios
+                            </f:facet>
+
+                            <p:column id="idColNombre" headerText ="Nombre" filterBy="#{usuario.nombreCompleto}" sortBy="#{usuario.nombreCompleto}" filterMatchMode="contains">
+                                <h:outputText value="#{usuario.nombreCompleto}"/>
+                            </p:column>
+
+                            <p:column id="idColCorreo" headerText ="Correo" filterBy="#{usuario.correo}" sortBy="#{usuario.correo}" filterMatchMode="contains">
+                                <h:outputText value="#{usuario.correo}"/>
+                            </p:column>
+
+                            <p:column id="idColCompania" headerText ="Compañia" filterBy="#{usuario.compania.nombre}" sortBy="#{usuario.compania.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{usuario.compania.nombre}"/>
+                            </p:column>
+
+                            <p:column id="idColEstatus" headerText ="Estatus" filterBy="#{usuario.estatus.nombre}" sortBy="#{usuario.estatus.nombre}" filterMatchMode="contains">
+                                <h:outputText value="#{usuario.estatus.nombre}"/>
+                            </p:column>
+                            <p:column id="idAcciones" headerText="Acciones" style="text-align: center;">
+                                <p:button icon="ui-icon-pencil"  title="Editar" outcome="nuevo" rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:usuarios:lista:editar')}">
+                                    <f:param name="id" value="#{usuario.id}"/>
+                                </p:button>
+                                <p:commandButton icon="ui-icon-delete" rendered="#{shiroAuthPermManagedBean.isPermitted('administracion:usuarios:lista:eliminar')}"  title="Borrar" actionListener="#{listaUsuarioManagedBean.eliminar()}" update=":fForm:growl,:fForm:dtUsuario">
+                                    <p:confirm header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                    <f:param name="id_e" value="#{usuario.id}"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                        <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                            <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                            <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                        </p:confirmDialog>
+                    </div>
+                </div>
+            </div>
+        </h:form>
+
+    </ui:define>
+
+</ui:composition>
+

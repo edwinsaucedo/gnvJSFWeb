@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:c="http://xmlns.jcp.org/jsp/jstl/core">
+    <ui:define name="head">
+        <style type="text/css">
+            .ladoDerecho {
+                /*                margin-left: 3.3% !important;*/
+                margin-right: 6% !important;
+                width: 16% !important;
+            }
+
+            .ladoIzquierdo {
+                width: 9% !important;
+            }
+        </style>
+        <script type="text/javascript">
+
+            function fValidaNumerico(pcampo)
+            {
+                var campo = document.getElementById(pcampo);
+                if (isNaN(campo.value))
+                {
+                    setClassError(pcampo);
+                    return false;
+                } else
+                {
+                    setClassNormal(pcampo);
+
+                }
+                return true;
+            }
+
+
+        </script>
+        <script>
+            function disableChoosing() {
+                PF('fileUpwidget').disableButton(PF('fileUpwidget').chooseButton);
+                PF('fileUpwidget').chooseButton.find('input[type="file"]').attr('disabled', 'disabled');
+            }
+
+            function enableChoosing() {
+                if (!PF('fileUpwidget').files.length) {
+                    PF('fileUpwidget').enableButton(PF('fileUpwidget').chooseButton);
+                    PF('fileUpwidget').chooseButton.find('input[type="file"]').removeAttr('disabled');
+                }
+            }
+        </script>
+
+    </ui:define>
+
+    <ui:define name="title">#{nuevoRevisionManagedBean.titulo}</ui:define>
+
+    <ui:define name="content">
+
+
+        <p:growl id="growl" showDetail="true"/>
+        <div class="ui-g ui-fluid">
+            <div class="ui-g-12">
+                <div class="cardScreenTitle">
+                    <h1>#{nuevoRevisionManagedBean.titulo}</h1>
+                </div>
+                <div class="card">
+                    <div class="ui-grid-row" style="margin-bottom: 10px;">
+                        <p:toolbar id="idToolBar">
+
+                            <p:toolbarGroup id="idToolBarGroup" align="left">
+                                <p:button id="cmbRegresar" value="Regresar" outcome="lista"  icon="ui-icon-keyboard-return" />
+                            </p:toolbarGroup>
+                        </p:toolbar>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+
+                <div class="card">
+                    <p:fieldset id="fsVehiculo" legend="Vehículo para la revisión" style="margin-bottom:5%;">
+                        <h:form id="frmVehiculo" >
+
+                            <p:tabView id="tabView" >
+
+                                <p:tab id="tab" title="Vehículo">
+                                    <p:growl id="growl" showDetail="true"/>
+
+                                    <p:panelGrid id="idPanelGridV" columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                        <h:outputLabel for="itPlacas" value="Placas:"/>
+                                        <p:inputText readonly="true"  id="itPlacas"  value="#{nuevoRevisionManagedBean.vehiculo.placa}" />
+
+
+
+                                        <h:outputLabel for="itVin" value="VIN: "/>
+                                        <p:inputText readonly="true" id="itVin"  value="#{nuevoRevisionManagedBean.vehiculo.vin}" />
+
+                                        <h:outputLabel for="itMarca" value="Linea: "/>
+                                        <p:inputText readonly="true" id="itMarca"  value="#{nuevoRevisionManagedBean.vehiculo.linea.nombre}" />
+
+
+
+                                        <h:outputLabel for="itLinea" value="Modelo :"/>
+                                        <p:inputText readonly="true" id="itLinea"  value="#{nuevoRevisionManagedBean.vehiculo.modelo}" />
+
+
+                                        <h:outputLabel for="itTipoVeh" value="Tipo Vehículo:"/>
+                                        <p:inputText readonly="true" id="itTipoVeh"  value="#{nuevoRevisionManagedBean.vehiculo.tipo.nombre}" />
+                                    </p:panelGrid>
+
+
+
+                                </p:tab>
+                                <p:tab title="Propietario" >
+
+                                    <p:dataTable  id="dtPropietarios"  tableStyle="table-layout:auto" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                  rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center " var="propietario" value="#{nuevoRevisionManagedBean.listaPropietario}">
+                                        <p:column headerText="Apellidos">
+                                            <h:outputText value="#{propietario.propietario.apellido}" />
+                                        </p:column>
+                                        <p:column headerText="Nombre">
+                                            <h:outputText value="#{propietario.propietario.nombre}" />
+                                        </p:column>
+                                        <p:column headerText="Numero de identificación">
+                                            <h:outputText value="#{propietario.propietario.numeroIdentificacion}" />
+                                        </p:column>
+                                        <p:column headerText="Telefono">
+                                            <h:outputText value="#{propietario.propietario.telefono}" />
+                                        </p:column>
+
+
+
+                                    </p:dataTable>
+                                </p:tab>
+
+                            </p:tabView>
+                        </h:form>
+                    </p:fieldset>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+
+                <div class="card">
+                    <p:fieldset id="fsEquipos" legend="Equipos instalados en el vehículo" style="margin-bottom:5%;">
+                        <h:form id="frmEquipo" >
+                            <p:tabView id="tabView" >
+
+                                <p:tab id="tab" title="Kits">
+                                    <p:dataTable id="dtKit"  tableStyle="table-layout:auto" paginator="true" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                 rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center " var="kit" value="#{nuevoRevisionManagedBean.listaKit}">
+                                        <p:column headerText="Serial">
+                                            <h:outputText value="#{kit.serial}" />
+                                        </p:column>
+
+                                        <p:column headerText="Marca">
+                                            <h:outputText value="#{kit.marca.nombre}" />
+                                        </p:column>
+
+                                        <p:column headerText="Linea">
+                                            <h:outputText value="#{kit.linea.nombre}" />
+                                        </p:column>
+
+                                    </p:dataTable>
+
+
+                                </p:tab>
+                                <p:tab title="Cilindros" >
+                                    <p:dataTable    id="dtCilindros" tableStyle="table-layout:auto"  value="#{nuevoRevisionManagedBean.listaCilindro}" paginator="true" var="cilindro" paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                                    rowsPerPageTemplate="5,10,15" style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center ">
+                                        <p:column headerText="Serial">
+                                            <h:outputText value="#{cilindro.serial}" />
+                                        </p:column>
+
+                                        <p:column headerText="Marca">
+                                            <h:outputText value="#{cilindro.marca.nombre}" />
+                                        </p:column>
+
+                                        <p:column headerText="Linea">
+                                            <h:outputText value="#{cilindro.linea.nombre}" />
+                                        </p:column>
+                                    </p:dataTable>
+
+
+                                </p:tab>
+
+                            </p:tabView>
+                        </h:form>
+                    </p:fieldset>
+                </div>
+            </div>
+        </div>
+
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+
+                <div class="card">
+                    <p:fieldset id="fsRevision" legend="Información principal de la revisión " style="margin-bottom:5%;">
+
+
+
+
+                        <h:form id="frmRev">
+                            <p:panelGrid id="idPanelGridV" columns="6"  layout="grid" columnClasses="ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho,ladoIzquierdo, ladoDerecho">
+
+                                <h:outputLabel for="cldFechaExpedicion" value="Fecha de revisión:"/>
+                                <p:calendar disabled="#{nuevoRevisionManagedBean.revisionInfoDisabled}" required="true" id="cldFechaExpedicion" showOn="button" value="#{nuevoRevisionManagedBean.fechaRevision}" requiredMessage="Ingrese la fecha de revisión"/>
+
+
+                                <h:outputLabel for="soEstatus" value="Estado de la revisión: "/>
+                                <p:selectOneMenu  id="soEstatus" disabled="#{nuevoRevisionManagedBean.revisionInfoDisabled}" value="#{nuevoRevisionManagedBean.estatusRevision}"  >
+                                    <f:selectItem itemLabel="Aprobado" itemValue="#{true}" />
+                                    <f:selectItem itemLabel="No aprobado" itemValue="#{false}" />
+                                </p:selectOneMenu> 
+
+                                <h:outputLabel for="soTaller" value="Taller: "/>
+                                <p:selectOneMenu  required="true" disabled="#{nuevoRevisionManagedBean.revisionInfoDisabled}" id="soTaller" value="#{nuevoRevisionManagedBean.taller}" converter="#{tallerConverter}"  requiredMessage="Taller requerido.">
+                                    <f:selectItem itemLabel="Seleccione" itemValue="Seleccione"/>
+                                    <f:selectItems value="#{nuevoRevisionManagedBean.listaTaller}" var="t" itemLabel="#{t.nombre}" itemValue="#{t}"/>
+                                </p:selectOneMenu>
+
+
+                                <h:outputLabel for="itObservacion" value="Observación:"/>
+                                <p:inputTextarea  id="itObservacion" required="true" requiredMessage="Observación requerido" disabled="#{nuevoRevisionManagedBean.revisionInfoDisabled}"  value="#{nuevoRevisionManagedBean.observacion}" /> 
+                                <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:revision:lista:editar')}" icon="ui-icon-save"  disabled="#{nuevoRevisionManagedBean.revisionInfoDisabled}" style="width:100px;height:30px" update="growl,frmRev" id="cbtnGuardar" value="Guardar" actionListener="#{nuevoRevisionManagedBean.guardarRevision()}"  />
+
+                            </p:panelGrid>
+                        </h:form>
+                    </p:fieldset>
+
+                </div>
+            </div>
+        </div>
+
+
+        <div id="divui" class="ui-g ui-fluid">
+
+            <div class="ui-g-12">
+                <div class="card">
+                    <p:fieldset id="fsSubirDocumentos" legend="Documentos de soporte" style="margin-bottom:5%;">
+
+                        <h:form id="frmDocumento">
+                            <p:growl id="messages" showDetail="true" />
+
+                            <p:panelGrid id="idPanelGridVehiculoInfAdc" columns="2" layout="grid" style="margin-bottom:1%">
+                                <h:outputLabel for="isPublico"  value="Público:" />
+                                <p:inputSwitch id="isPublico" value="" >
+                                    <p:ajax />
+                                </p:inputSwitch>
+                                <h:outputLabel for="fuButton" value="Seleccionar documento: "/>
+                                <p:fileUpload rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:revision:nuevo:cargar:documentos')}" label="Examinar"  mode="advanced" fileUploadListener="#{nuevoRevisionManagedBean.guardarDocumento}" widgetVar="fileUpwidget" id="fuButton" sizeLimit="5000000"  fileLimit="100" multiple="false" auto="true" dragDropSupport="false" onstart="disableChoosing()" skinSimple="true" update="frmdtFiles" oncomplete="enableChoosing()"/>
+
+                            </p:panelGrid>  
+
+                        </h:form>
+
+
+
+
+                        <h:form id="frmdtFiles">
+                            <p:dataTable id="dtFiles" tableStyle="table-layout:auto" value="#{nuevoRevisionManagedBean.listaDocumento}" paginator="true" var="documento" paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                                         rowsPerPageTemplate="5,10,15"  style="width:50%; margin: 0 auto; margin-bottom: 10px; margin-left: 25%; margin-top: 15px; align-content: center; alignment-adjust: central; align-self: center ">
+
+                                <p:column headerText="Nombre">
+                                    <h:outputText value="#{documento.nombre}" />
+                                </p:column>
+
+                                <p:column headerText="Extension">
+                                    <h:outputText value="#{documento.tipoArchivo.extension}" />
+                                </p:column>
+
+                                <p:column headerText="Acciones" style="text-align: center;">
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:revision:nuevo:descargar:documentos')}" icon="ui-icon-file-download"  title="Descargar" actionListener="#{nuevoRevisionManagedBean.descargarDocumento(documento.id)}"   ajax="false" >
+                                        <p:fileDownload value="#{nuevoRevisionManagedBean.streamedContent}" contentDisposition="inline"/>
+                                    </p:commandButton>
+
+
+                                    <p:commandButton rendered="#{shiroAuthPermManagedBean.isPermitted('procesos:revision:nuevo:eliminar:documentos')}" id="btnDeleteCil" icon="ui-icon-delete"  title="Borrar"   update="dtFiles">
+                                        <p:confirm  header="Confirmación" message="¿Está seguro que desea eliminar el registro?" icon="ui-icon-alert" />                                            
+                                        <f:param name="idDoc" value="#{documento.id}"/>
+                                    </p:commandButton>
+                                </p:column>
+
+                            </p:dataTable>
+                            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade"> 
+                                <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check"/>
+                                <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+                            </p:confirmDialog>
+
+                        </h:form>
+                    </p:fieldset>
+                </div>
+            </div>
+        </div>
+        <br/>
+
+    </ui:define>
+
+
+</ui:composition>
